@@ -35,6 +35,26 @@ export function Navbar() {
     session?.user?.role === "admin" ? "/admin/dashboard" :
       "/user/dashboard";
 
+  const navLinks = session
+    ? [
+        { en: "Home", hi: "होम", href: "/" },
+        { en: "Temples", hi: "मंदिर", href: "/temples" },
+        { en: "Puja", hi: "पूजा", href: "/puja" },
+        { en: "Chadawa", hi: "चढ़ावा", href: "/chadawa" },
+        { en: "Blog", hi: "ब्लॉग", href: "/blog" },
+        { en: "Astro", hi: "ज्योतिष", href: "/astro" },
+        { en: "Dashboard", hi: "डैशबोर्ड", href: dashboardHref },
+        { en: "Profile", hi: "प्रोफ़ाइल", href: "/user/profile" },
+      ]
+    : [
+        { en: "Home", hi: "होम", href: "/" },
+        { en: "Temples", hi: "मंदिर", href: "/temples" },
+        { en: "Puja", hi: "पूजा", href: "/puja" },
+        { en: "Chadawa", hi: "चढ़ावा", href: "/chadawa" },
+        { en: "Blog", hi: "ब्लॉग", href: "/blog" },
+        { en: "Astro", hi: "ज्योतिष", href: "/astro" },
+      ];
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       (scrolled || mobileOpen) ? "backdrop-blur-md bg-background/95 shadow-sm border-b border-border" : "bg-transparent"
@@ -55,12 +75,12 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map((link) => (
+        <div className="hidden md:flex items-center gap-3.5 lg:gap-5">
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-foreground hover:text-saffron font-medium transition-colors duration-200 relative group text-sm"
+              className="text-foreground hover:text-saffron font-medium transition-colors duration-200 relative group text-xs lg:text-sm"
             >
               {t(link.en, link.hi)}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-saffron group-hover:w-full transition-all duration-200" />
@@ -192,7 +212,7 @@ export function Navbar() {
                 </div>
               )}
 
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
