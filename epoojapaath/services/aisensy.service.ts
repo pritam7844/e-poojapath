@@ -30,7 +30,20 @@ export async function sendOtp(phone: string, name: string, otp: string) {
         campaignName,
         destination,
         userName: name,
-        templateParams: [otp], // {{1}} for OTP
+        templateParams: [otp], // {{1}} for OTP body
+        buttons: [
+          {
+            type: "button",
+            sub_type: "url",
+            index: 0,
+            parameters: [
+              {
+                type: "text",
+                text: otp // OTP code to be copied by the button
+              }
+            ]
+          }
+        ]
       }),
     });
 
