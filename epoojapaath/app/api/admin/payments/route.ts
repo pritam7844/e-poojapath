@@ -5,6 +5,8 @@ import Payment from "@/models/Payment";
 import "@/models/User";
 import "@/models/Booking";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
