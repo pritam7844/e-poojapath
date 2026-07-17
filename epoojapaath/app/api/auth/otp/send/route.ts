@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // 5 minutes validity
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    // Save or update the OTP in MongoDB
+    // Save or update the generated OTP in MongoDB
     await Otp.findOneAndUpdate(
       { phone: cleanPhone },
       { otp: generatedOtp, expiresAt },
