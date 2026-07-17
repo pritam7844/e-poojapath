@@ -65,7 +65,7 @@ export default function RegisterPage() {
               value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <Input label="Email Address" type="email" required placeholder="your@email.com"
               value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            <Input label="Phone (Optional)" type="tel" placeholder="+91 98765 43210"
+            <Input label="WhatsApp Mobile Number" type="tel" required placeholder="10-digit mobile number"
               value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             <Input label="Password" type="password" required placeholder="Min 8 characters"
               value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />

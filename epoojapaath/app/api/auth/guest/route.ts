@@ -6,7 +6,6 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const GuestSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   otp: z.string().min(6, "Verification code must be at least 6 characters"),
 });
@@ -65,9 +64,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
+      // In case they bypassed the send OTP check
       const hashedPassword = await bcrypt.hash(rawPassword, 12);
       user = await User.create({
-        name: data.name.trim(),
+        name: "Devotee",
         email: email,
         phone: cleanPhone,
         password: hashedPassword,
@@ -80,11 +80,6 @@ export async function POST(req: NextRequest) {
           { success: false, error: "This mobile number is blocked." },
           { status: 400 }
         );
-      }
-      // Keep the user's name updated to whatever they typed in the guest form
-      if (user.name !== data.name.trim()) {
-        user.name = data.name.trim();
-        await user.save();
       }
     }
 

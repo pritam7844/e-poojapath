@@ -46,10 +46,6 @@ export default function LoginPage() {
 
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
-    if (!name || name.trim().length < 2) {
-      devToast.error("Please enter a valid Name (at least 2 characters)");
-      return;
-    }
     if (!phone || phone.trim().length < 10) {
       devToast.error("Please enter a valid 10-digit mobile number");
       return;
@@ -60,7 +56,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, name }),
+        body: JSON.stringify({ phone }),
       });
       const data = await res.json();
       if (data.success) {
@@ -93,7 +89,6 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name,
           phone: phone,
           otp: otp,
         }),
@@ -115,7 +110,7 @@ export default function LoginPage() {
       } else if (result?.error) {
         devToast.error("Authentication failed");
       } else {
-        fpixel.event("Lead", { content_name: "WhatsApp OTP Login", phone: phone, name: name });
+        fpixel.event("Lead", { content_name: "WhatsApp OTP Login", phone: phone });
         devToast.blessing("Welcome back! Jai Shri Ram 🙏");
         router.push("/");
         router.refresh();
@@ -194,14 +189,6 @@ export default function LoginPage() {
             <div className="space-y-4">
                {!otpSent ? (
                 <form onSubmit={handleSendOtp} className="space-y-4">
-                  <Input
-                    label="Full Name"
-                    type="text"
-                    required
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
                   <Input
                     label="WhatsApp Mobile Number"
                     type="tel"
