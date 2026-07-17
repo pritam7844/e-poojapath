@@ -13,6 +13,7 @@ import { Clock, CheckCircle2, Sparkles } from "lucide-react";
 import { AdBanner } from "@/components/ads/AdBanner";
 import type { IPuja } from "@/types";
 import { PublicPage } from "@/components/shared/PublicPage";
+import * as fpixel from "@/lib/fpixel";
 
 function formatDisplayDate(dateStr: string): string {
   try {
@@ -147,7 +148,7 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
       });
       const orderData = await orderRes.json();
 
-      new window.Razorpay({
+      const rzp = new window.Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: grandTotal * 100,
         currency: "INR",
@@ -164,6 +165,7 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
           });
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            fpixel.event("Purchase", { content_name: puja?.name, value: grandTotal, currency: "INR" });
             await fetch("/api/bookings", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -174,7 +176,10 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
             setTimeout(() => router.push("/user/bookings"), 3000);
           }
         },
-      }).open();
+      });
+
+      fpixel.event("InitiateCheckout", { content_name: puja?.name, value: grandTotal, currency: "INR" });
+      rzp.open();
     } catch { devToast.error("Booking failed. Please try again."); }
     finally { setLoading(false); }
   }

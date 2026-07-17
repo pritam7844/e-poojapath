@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { devToast } from "@/lib/toast";
+import * as fpixel from "@/lib/fpixel";
 
 export default function RegisterPage() {
   const [form,    setForm]    = useState({ name: "", email: "", phone: "", password: "" });
@@ -24,6 +25,8 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (data.success) {
+        fpixel.event("CompleteRegistration", { name: form.name, email: form.email });
+        fpixel.event("Lead", { content_name: "User Signup Registration", email: form.email, name: form.name });
         devToast.blessing("Account created! 🙏 Jai Shri Ram");
         router.push("/login");
       } else devToast.error(data.error);

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { devToast } from "@/lib/toast";
 import { Home } from "lucide-react";
+import * as fpixel from "@/lib/fpixel";
 
 export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<"email" | "whatsapp">("email");
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const [otp,      setOtp]      = useState("");
   const [otpSent,  setOtpSent]  = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
+  const [simulatedOtp, setSimulatedOtp] = useState<string | null>(null);
   const [loading,  setLoading]  = useState(false);
   const router = useRouter();
 
@@ -32,6 +34,7 @@ export default function LoginPage() {
       } else if (result?.error) {
         devToast.error("Invalid email or password");
       } else {
+        fpixel.event("Lead", { content_name: "Email Login", email: email });
         devToast.blessing("Welcome back! Jai Shri Ram 🙏");
         router.push("/");
         router.refresh();
@@ -52,17 +55,36 @@ export default function LoginPage() {
       return;
     }
     setOtpLoading(true);
-    setTimeout(() => {
-      setOtpSent(true);
+    setSimulatedOtp(null);
+    try {
+      const res = await fetch("/api/auth/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, name }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpSent(true);
+        if (data.simulated) {
+          setSimulatedOtp(data.otp);
+          devToast.blessing(`Verification code sent! Use OTP ${data.otp} (Simulated for testing)`);
+        } else {
+          devToast.blessing("Verification code sent via WhatsApp! 🌸");
+        }
+      } else {
+        devToast.error(data.error || "Failed to send verification code");
+      }
+    } catch {
+      devToast.error("Failed to send verification code. Please try again.");
+    } finally {
       setOtpLoading(false);
-      devToast.blessing("Verification code sent! Use OTP 123456 (Simulated for testing)");
-    }, 1000);
+    }
   }
 
   async function handleVerifyOtp(e: React.FormEvent) {
     e.preventDefault();
-    if (otp !== "123456") {
-      devToast.error("Invalid verification code");
+    if (!otp || otp.trim().length < 6) {
+      devToast.error("Please enter a valid 6-digit verification code");
       return;
     }
     setLoading(true);
@@ -73,6 +95,7 @@ export default function LoginPage() {
         body: JSON.stringify({
           name: name,
           phone: phone,
+          otp: otp,
         }),
       });
       const guestData = await res.json();
@@ -92,6 +115,7 @@ export default function LoginPage() {
       } else if (result?.error) {
         devToast.error("Authentication failed");
       } else {
+        fpixel.event("Lead", { content_name: "WhatsApp OTP Login", phone: phone, name: name });
         devToast.blessing("Welcome back! Jai Shri Ram 🙏");
         router.push("/");
         router.refresh();
@@ -192,11 +216,13 @@ export default function LoginPage() {
                 </form>
               ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
-                  <div className="bg-saffron/10 border border-saffron/30 rounded-xl p-3 text-center mb-2">
-                    <p className="text-xs text-saffron font-medium">
-                      Simulated code: <span className="font-bold underline text-sm">123456</span>
-                    </p>
-                  </div>
+                  {simulatedOtp && (
+                    <div className="bg-saffron/10 border border-saffron/30 rounded-xl p-3 text-center mb-2">
+                      <p className="text-xs text-saffron font-medium">
+                        Simulated code: <span className="font-bold underline text-sm">{simulatedOtp}</span>
+                      </p>
+                    </div>
+                  )}
                   <Input
                     label="Verification Code (OTP)"
                     type="text"

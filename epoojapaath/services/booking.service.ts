@@ -4,6 +4,7 @@ import Temple from "@/models/Temple";
 import Puja from "@/models/Puja";
 import Payment from "@/models/Payment";
 import "@/models/User";
+import { sendBookingConfirmation } from "@/services/aisensy.service";
 
 export async function createBooking(data: Record<string, any>) {
   await connectDB();
@@ -97,11 +98,40 @@ export async function getTempleBookings(templeId: string) {
 
 export async function updateBooking(id: string, updates: Record<string, any>) {
   await connectDB();
-  const existing = await Booking.findById(id);
+  const existing = await Booking.findById(id).populate("user").populate("temple");
   if (!existing) return null;
 
   const wasPaid = existing.paymentStatus === "paid";
   const isPaidNow = updates.paymentStatus === "paid";
+
+  if (!wasPaid && isPaidNow) {
+    try {
+      const userObj = existing.user as any;
+      const templeObj = existing.temple as any;
+      const phone = existing.whatsappPhone || userObj?.phone;
+      const name = existing.devoteeName || userObj?.name;
+
+      if (phone && name) {
+        const dateStr = new Date(existing.date).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+
+        sendBookingConfirmation(phone, name, {
+          bookingId: existing._id.toString(),
+          templeName: templeObj?.name || "Temple",
+          serviceName: existing.serviceName || "Puja",
+          date: dateStr,
+          amount: existing.amount,
+        }).catch((err) => {
+          console.error("Failed to send booking confirmation WhatsApp in background:", err);
+        });
+      }
+    } catch (err) {
+      console.error("Error preparing booking confirmation WhatsApp message:", err);
+    }
+  }
 
   let updated;
   if (existing.orderId) {
