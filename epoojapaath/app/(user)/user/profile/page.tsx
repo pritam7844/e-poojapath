@@ -14,8 +14,22 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (session?.user) {
-      setForm((prev) => ({ ...prev, name: session.user.name || "" }));
+    if (session?.user?.id) {
+      fetch(`/api/users/${session.user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.data) {
+            const u = data.data;
+            setForm({
+              name: u.name || "",
+              phone: u.phone || "",
+              city: u.city || "",
+              gotra: u.gotra || "",
+              language: u.language || "en",
+            });
+          }
+        })
+        .catch((err) => console.error("Error loading profile:", err));
     }
   }, [session]);
 
