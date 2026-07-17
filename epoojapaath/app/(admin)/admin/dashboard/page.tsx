@@ -29,7 +29,7 @@ async function getStats() {
     bookings,
     blogs,
     revenue: revenue[0]?.total || 0,
-    meta: metaResult.success ? metaResult : null,
+    meta: metaResult.success && metaResult.data ? { simulated: metaResult.simulated, data: metaResult.data } : null,
   };
 }
 
