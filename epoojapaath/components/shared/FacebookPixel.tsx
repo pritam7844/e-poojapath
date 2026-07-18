@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import * as fbq from "@/lib/fpixel";
+import { saveAttributionFromUrl } from "@/lib/attribution";
 
 function FacebookPixelInstance() {
   const pathname = usePathname();
@@ -10,6 +11,9 @@ function FacebookPixelInstance() {
 
   useEffect(() => {
     fbq.pageview();
+    if (searchParams) {
+      saveAttributionFromUrl(searchParams);
+    }
   }, [pathname, searchParams]);
 
   return null;

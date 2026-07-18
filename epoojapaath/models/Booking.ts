@@ -37,6 +37,10 @@ export interface IBookingDoc extends Document {
   subscriptionDuration?: number;
   subscriptionCycleIndex?: number;
   whatsappPhone?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  fbclid?: string;
   createdAt: Date;
 }
 
@@ -82,6 +86,10 @@ const BookingSchema = new Schema<IBookingDoc>(
     subscriptionDuration: { type: Number },
     subscriptionCycleIndex: { type: Number },
     whatsappPhone: { type: String },
+    utmSource: { type: String },
+    utmMedium: { type: String },
+    utmCampaign: { type: String },
+    fbclid: { type: String },
   },
   { timestamps: true }
 );

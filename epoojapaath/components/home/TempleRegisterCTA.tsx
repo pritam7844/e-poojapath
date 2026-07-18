@@ -7,6 +7,8 @@ import { X, Phone, Mail, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { devToast } from "@/lib/toast";
+import * as fpixel from "@/lib/fpixel";
+import { getAttributionData } from "@/lib/attribution";
 
 export function TempleRegisterCTA() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,14 +39,16 @@ export function TempleRegisterCTA() {
 
     setSubmitting(true);
     try {
+      const attribution = getAttributionData();
       const res = await fetch("/api/temple-requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...attribution }),
       });
 
       const data = await res.json();
       if (data.success) {
+        fpixel.event("Lead", { content_name: "Temple Registration Request", templeName: formData.templeName, contactName: formData.contactName });
         devToast.success(data.message || "Submitted successfully! 🙏");
         setIsOpen(false);
         setFormData({

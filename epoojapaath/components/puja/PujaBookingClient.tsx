@@ -12,6 +12,8 @@ import { devToast } from "@/lib/toast";
 import { formatCurrency } from "@/lib/utils";
 import type { IPuja, IPujaPackage, IChadawa } from "@/types";
 import { CheckCircle2, ShoppingBag, Users, Gift, ChevronRight, Minus, Plus } from "lucide-react";
+import * as fpixel from "@/lib/fpixel";
+import { getAttributionData } from "@/lib/attribution";
 
 const ReactConfetti = dynamic(() => import("react-confetti"), { ssr: false });
 
@@ -167,11 +169,13 @@ export function PujaBookingClient({ puja, chadawaItems = [] }: Props) {
       });
       const orderData = await orderRes.json();
 
+      const attribution = getAttributionData();
       const bookingRes = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          ...attribution,
           temple: typeof puja.temple === "object" ? (puja.temple as { _id: string })._id : puja.temple,
           service: puja._id,
           serviceType: "puja",
@@ -195,7 +199,7 @@ export function PujaBookingClient({ puja, chadawaItems = [] }: Props) {
       const bookingJson = await bookingRes.json();
       const bookingId = bookingJson.data._id;
 
-      new window.Razorpay({
+      const rzp = new window.Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: grandTotal * 100,
         currency: "INR",
@@ -220,6 +224,8 @@ export function PujaBookingClient({ puja, chadawaItems = [] }: Props) {
           });
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            fpixel.event("Purchase", { content_name: puja.name, value: grandTotal, currency: "INR" });
+            fpixel.event("Lead", { content_name: puja.name, value: grandTotal, currency: "INR" });
             await fetch(`/api/bookings/${bookingId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -246,7 +252,10 @@ export function PujaBookingClient({ puja, chadawaItems = [] }: Props) {
             setLoading(false);
           }
         }
-      }).open();
+      });
+
+      fpixel.event("InitiateCheckout", { content_name: puja.name, value: grandTotal, currency: "INR" });
+      rzp.open();
 
     } catch {
       devToast.error("Booking failed. Please try again.");

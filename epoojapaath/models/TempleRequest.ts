@@ -10,6 +10,10 @@ export interface ITempleRequestDoc extends Document {
   email?: string;
   notes?: string;
   status: "pending" | "contacted" | "completed" | "rejected";
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  fbclid?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,6 +33,10 @@ const TempleRequestSchema = new Schema<ITempleRequestDoc>(
       enum: ["pending", "contacted", "completed", "rejected"],
       default: "pending",
     },
+    utmSource: { type: String },
+    utmMedium: { type: String },
+    utmCampaign: { type: String },
+    fbclid: { type: String },
   },
   { timestamps: true }
 );

@@ -276,6 +276,39 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
           </div>
         )}
 
+        {/* Marketing Attribution Details (Admin Only) */}
+        {session.user.role === "admin" && (booking.utmSource || booking.utmMedium || booking.utmCampaign || booking.fbclid) && (
+          <div className="card-devotional">
+            <h2 className="font-heading text-lg text-foreground mb-4">Marketing Attribution</h2>
+            <dl className="space-y-2 text-sm">
+              {booking.utmSource && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">UTM Source</dt>
+                  <dd className="font-medium text-foreground select-all">{booking.utmSource}</dd>
+                </div>
+              )}
+              {booking.utmMedium && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">UTM Medium</dt>
+                  <dd className="font-medium text-foreground select-all">{booking.utmMedium}</dd>
+                </div>
+              )}
+              {booking.utmCampaign && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">UTM Campaign</dt>
+                  <dd className="font-medium text-foreground select-all">{booking.utmCampaign}</dd>
+                </div>
+              )}
+              {booking.fbclid && (
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground shrink-0">FB Click ID (fbclid)</dt>
+                  <dd className="font-mono text-foreground text-xs select-all truncate max-w-[280px]" title={booking.fbclid}>{booking.fbclid}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+        )}
+
         {/* Video Prasad */}
         {booking.videoUrl && (
           <div className="card-devotional">

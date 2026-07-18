@@ -23,6 +23,8 @@ import {
   Clock,
 } from "lucide-react";
 import { PujaCountdownTimer } from "./PujaCountdownTimer";
+import * as fpixel from "@/lib/fpixel";
+import { getAttributionData } from "@/lib/attribution";
 import { Input, Textarea, Select } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { devToast } from "@/lib/toast";
@@ -335,11 +337,13 @@ export function PujaDetailClient({
       });
       const orderData = await orderRes.json();
 
+      const attribution = getAttributionData();
       const bookingRes = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          ...attribution,
           devoteeName: form.devoteeNames.filter((n) => n.trim() !== "").join(", "),
           temple: temple._id,
           service: puja._id,
@@ -364,7 +368,7 @@ export function PujaDetailClient({
       const bookingJson = await bookingRes.json();
       const bookingId = bookingJson.data._id;
 
-      new window.Razorpay({
+      const rzp = new window.Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: grandTotal * 100,
         currency: "INR",
@@ -389,6 +393,8 @@ export function PujaDetailClient({
           });
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            fpixel.event("Purchase", { content_name: puja.name, value: grandTotal, currency: "INR" });
+            fpixel.event("Lead", { content_name: puja.name, value: grandTotal, currency: "INR" });
             await fetch(`/api/bookings/${bookingId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -415,7 +421,10 @@ export function PujaDetailClient({
             setLoading(false);
           }
         }
-      }).open();
+      });
+
+      fpixel.event("InitiateCheckout", { content_name: puja.name, value: grandTotal, currency: "INR" });
+      rzp.open();
 
     } catch {
       devToast.error("Booking failed. Please try again.");

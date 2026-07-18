@@ -12,6 +12,10 @@ const TempleRequestSchema = z.object({
   phone: z.string().regex(/^[0-9+\-\s()]{10,15}$/, "Please enter a valid phone number"),
   email: z.string().email("Invalid email format").optional().or(z.literal("")),
   notes: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional(),
+  fbclid: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -33,6 +37,10 @@ export async function POST(req: NextRequest) {
       email: parsedData.email || undefined,
       notes: parsedData.notes || "",
       status: "pending",
+      utmSource: parsedData.utmSource,
+      utmMedium: parsedData.utmMedium,
+      utmCampaign: parsedData.utmCampaign,
+      fbclid: parsedData.fbclid,
     });
 
     return NextResponse.json({

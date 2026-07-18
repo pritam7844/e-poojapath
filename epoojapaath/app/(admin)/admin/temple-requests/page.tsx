@@ -261,6 +261,17 @@ export default function TempleRequestsPage() {
                     <p className="leading-relaxed whitespace-pre-line">{req.notes}</p>
                   </div>
                 )}
+
+                {/* attribution */}
+                {(req.utmSource || req.utmMedium || req.utmCampaign || req.fbclid) && (
+                  <div className="bg-saffron/5 border border-saffron/10 rounded-xl p-3 text-[11px] text-foreground/80 flex flex-wrap gap-x-4 gap-y-1.5 mt-2">
+                    <span className="font-semibold text-saffron">Attribution:</span>
+                    {req.utmSource && <span>Source: <strong className="select-all font-semibold">{req.utmSource}</strong></span>}
+                    {req.utmMedium && <span>Medium: <strong className="select-all font-semibold">{req.utmMedium}</strong></span>}
+                    {req.utmCampaign && <span>Campaign: <strong className="select-all font-semibold">{req.utmCampaign}</strong></span>}
+                    {req.fbclid && <span className="truncate max-w-[200px]" title={req.fbclid}>fbclid: <strong className="select-all font-semibold">{req.fbclid}</strong></span>}
+                  </div>
+                )}
               </div>
 
               {/* Middle Column: Owner / Contact Details */}

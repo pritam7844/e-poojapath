@@ -14,6 +14,7 @@ import { AdBanner } from "@/components/ads/AdBanner";
 import type { IPuja } from "@/types";
 import { PublicPage } from "@/components/shared/PublicPage";
 import * as fpixel from "@/lib/fpixel";
+import { getAttributionData } from "@/lib/attribution";
 
 function formatDisplayDate(dateStr: string): string {
   try {
@@ -166,10 +167,12 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
             fpixel.event("Purchase", { content_name: puja?.name, value: grandTotal, currency: "INR" });
+            fpixel.event("Lead", { content_name: puja?.name, value: grandTotal, currency: "INR" });
+            const attribution = getAttributionData();
             await fetch("/api/bookings", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...form, temple: puja?.temple, service: params.id, serviceType: "puja", serviceName: puja?.name, serviceNameHi: puja?.nameHi, amount: grandTotal, orderId: response.razorpay_order_id, paymentId: response.razorpay_payment_id, paymentStatus: "paid" }),
+              body: JSON.stringify({ ...form, ...attribution, temple: puja?.temple, service: params.id, serviceType: "puja", serviceName: puja?.name, serviceNameHi: puja?.nameHi, amount: grandTotal, orderId: response.razorpay_order_id, paymentId: response.razorpay_payment_id, paymentStatus: "paid" }),
             });
             setBooked(true);
             devToast.blessing("🙏 Puja Booked! Divine blessings incoming...");

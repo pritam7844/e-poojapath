@@ -14,6 +14,7 @@ import { PublicPage } from "@/components/shared/PublicPage";
 import { Input, Textarea, Select } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import * as fpixel from "@/lib/fpixel";
+import { getAttributionData } from "@/lib/attribution";
 import { devToast } from "@/lib/toast";
 import { formatCurrency } from "@/lib/utils";
 
@@ -256,11 +257,13 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
       const orderData = await orderRes.json();
 
       const templeId = typeof chadawa?.temple === "object" ? chadawa.temple._id : chadawa?.temple;
+      const attribution = getAttributionData();
       const bookingRes = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          ...attribution,
           temple: templeId,
           service: params.id,
           serviceType: "chadawa",
@@ -309,6 +312,7 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
             fpixel.event("Purchase", { content_name: combinedNames, value: grandTotal, currency: "INR" });
+            fpixel.event("Lead", { content_name: combinedNames, value: grandTotal, currency: "INR" });
             await fetch(`/api/bookings/${bookingId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },

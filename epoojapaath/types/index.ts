@@ -152,6 +152,10 @@ export interface IBooking {
   subscriptionDuration?: number;
   subscriptionCycleIndex?: number;
   whatsappPhone?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  fbclid?: string;
   createdAt: string;
 }
 
@@ -216,6 +220,10 @@ export interface ITempleRequest {
   email?: string;
   notes?: string;
   status: "pending" | "contacted" | "completed" | "rejected";
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  fbclid?: string;
   createdAt: string;
   updatedAt: string;
 }
