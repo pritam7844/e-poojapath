@@ -1,6 +1,6 @@
 export function MandalaDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center py-8 ${className}`}>
+    <div className={`flex items-center justify-center py-4 ${className}`}>
       <svg width="420" height="40" viewBox="0 0 420 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="lotusLine" x1="0%" y1="0%" x2="100%" y2="0%">

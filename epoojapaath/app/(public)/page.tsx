@@ -2,58 +2,78 @@ export const dynamic = "force-dynamic";
 
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
-import { Hero } from "@/components/home/Hero";
+import { NewHero } from "@/components/home/NewHero";
 import { MarqueeStrip } from "@/components/home/MarqueeStrip";
-import { FeaturedTemples } from "@/components/home/FeaturedTemples";
 import { PopularPujas } from "@/components/home/PopularPujas";
+import { WhyChoose } from "@/components/home/WhyChoose";
+import { FeaturedTemples } from "@/components/home/FeaturedTemples";
+import { TrustedBanner } from "@/components/home/TrustedBanner";
 import { ChadawaSection } from "@/components/home/ChadawaSection";
+import { MonthlySubscription } from "@/components/home/MonthlySubscription";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { Testimonials } from "@/components/home/Testimonials";
 import { Stats } from "@/components/home/Stats";
 import { DPIITRecognition } from "@/components/home/DPIITRecognition";
 import { BlogPreview } from "@/components/home/BlogPreview";
-import { Testimonials } from "@/components/home/Testimonials";
+import { Newsletter } from "@/components/home/Newsletter";
+import { TrustBadges } from "@/components/home/TrustBadges";
 import { TempleRegisterCTA } from "@/components/home/TempleRegisterCTA";
+import { BottomCTA } from "@/components/home/BottomCTA";
 import { MandalaDivider } from "@/components/shared/MandalaDivider";
 import { AdBanner } from "@/components/ads/AdBanner";
-import { AIChat } from "@/components/ai-chat/AIChat";
-import { WhatsAppWidget } from "@/components/shared/WhatsAppWidget";
 import { getActiveAds } from "@/services/ad.service";
 import { serialize } from "@/lib/utils";
+
+import { connectDB } from "@/lib/db";
+import Puja from "@/models/Puja";
+
+async function getSubscriptionPuja() {
+  await connectDB();
+  return Puja.findOne({ isSubscription: true, isActive: true })
+    .populate("temple", "name")
+    .sort({ price: 1 })
+    .lean();
+}
 
 export default async function HomePage() {
   const heroAds = serialize(await getActiveAds("hero").catch(() => [])) as any[];
   const sectionAds = serialize(await getActiveAds("between-sections").catch(() => [])) as any[];
+  const subscriptionPuja = serialize(await getSubscriptionPuja().catch(() => null));
 
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
+        <NewHero />
         {heroAds.length > 0 && <AdBanner ads={heroAds} />}
         <MarqueeStrip />
-        <MandalaDivider />
-        <FeaturedTemples />
-        <MandalaDivider />
+
         <PopularPujas />
-        <MandalaDivider />
+        <WhyChoose />
+        <FeaturedTemples />
+        <TrustedBanner />
+
         <ChadawaSection />
         {sectionAds.length > 0 && <AdBanner ads={sectionAds} />}
-        <MandalaDivider />
+        <MonthlySubscription subscription={subscriptionPuja as any} />
         <HowItWorks />
+        <Testimonials />
         <Stats />
+
         <MandalaDivider />
         <DPIITRecognition />
         <MandalaDivider />
         <BlogPreview />
-        <MandalaDivider />
-        <Testimonials />
+
+        <Newsletter />
+        <TrustBadges />
+
         <MandalaDivider />
         <TempleRegisterCTA />
+
+        <BottomCTA />
       </main>
       <Footer />
-      <AIChat />
-      <WhatsAppWidget />
     </>
   );
 }
-

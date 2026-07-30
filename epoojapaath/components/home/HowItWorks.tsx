@@ -1,101 +1,84 @@
 "use client";
-
-import { motion } from "framer-motion";
+ 
 import { useLang } from "@/contexts/LanguageContext";
-
-const steps = [
-  {
-    icon: "🛕", step: "01",
-    en: { title: "Choose Your Temple",       desc: "Browse 500+ verified temples across India. Filter by deity, city, or puja type." },
-    hi: { title: "मंदिर चुनें",               desc: "भारत के 500+ प्रमाणित मंदिर देखें। देवता, शहर या पूजा के प्रकार से फ़िल्टर करें।" },
-  },
-  {
-    icon: "📿", step: "02",
-    en: { title: "Select Puja or Chadawa",   desc: "Pick from curated rituals — Rudrabhishek, Satyanarayan, Navgrah, or custom offerings." },
-    hi: { title: "पूजा या चढ़ावा चुनें",       desc: "रुद्राभिषेक, सत्यनारायण, नवग्रह या कस्टम अर्पण — अपनी पसंद की पूजा चुनें।" },
-  },
-  {
-    icon: "🪔", step: "03",
-    en: { title: "Book & Pay Securely",      desc: "Fill your Sankalp, choose date, and pay via Razorpay. 100% secure, instant confirmation." },
-    hi: { title: "बुक करें और सुरक्षित भुगतान करें", desc: "संकल्प भरें, तारीख चुनें और Razorpay से भुगतान करें। 100% सुरक्षित, तुरंत पुष्टि।" },
-  },
-  {
-    icon: "🌸", step: "04",
-    en: { title: "Receive Blessings",        desc: "Puja performed by temple pandits. Get live stream link, prasad delivery & photo/video proof." },
-    hi: { title: "आशीर्वाद प्राप्त करें",     desc: "मंदिर के पंडितों द्वारा पूजा। लाइव स्ट्रीम, प्रसाद डिलीवरी और वीडियो प्रमाण पाएं।" },
-  },
-];
-
+ 
 export function HowItWorks() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
+ 
+  const steps = [
+    {
+      number: "01",
+      emoji: "🛕",
+      title: t("Choose Your Temple", "मंदिर चुनें"),
+      desc: t(
+        "Browse 500+ verified temples across India. Filter by deity, city, or puja type.",
+        "भारत भर में 500+ सत्यापित मंदिरों को खोजें। देवता, शहर या पूजा प्रकार से फ़िल्टर करें।"
+      ),
+    },
+    {
+      number: "02",
+      emoji: "📿",
+      title: t("Select Puja or Chadawa", "पूजा या चढ़ावा चुनें"),
+      desc: t(
+        "Pick from curated rituals — Rudrabhishek, Satyanarayan, Navgrah, or custom offerings.",
+        "चुनिंदा अनुष्ठानों में से चुनें - रुद्राभिषेक, सत्यनारायण, नवग्रह, या कस्टम चढ़ावा।"
+      ),
+    },
+    {
+      number: "03",
+      emoji: "🪔",
+      title: t("Book & Pay Securely", "सुरक्षित बुकिंग और भुगतान"),
+      desc: t(
+        "Fill your Sankalp, choose date, and pay via Razorpay. 100% secure, instant confirmation.",
+        "अपना संकल्प भरें, तारीख चुनें, और रेज़रपे के माध्यम से भुगतान करें। 100% सुरक्षित, त्वरित पुष्टि।"
+      ),
+    },
+    {
+      number: "04",
+      emoji: "🌸",
+      title: t("Receive Blessings", "आशीर्वाद प्राप्त करें"),
+      desc: t(
+        "Puja performed by temple pandits. Get live stream link, prasad delivery & photo/video proof.",
+        "मंदिर के पंडितों द्वारा पूजा संपन्न। लाइव स्ट्रीम लिंक, प्रसाद वितरण और फोटो/वीडियो प्रमाण प्राप्त करें।"
+      ),
+    },
+  ];
+ 
   return (
-    <section className="section-padding bg-background relative overflow-hidden">
-      {/* Lotus-tinted bg blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full opacity-[0.06]"
-          style={{ background: "radial-gradient(circle, #EC9DD4, transparent 70%)" }} />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full opacity-[0.06]"
-          style={{ background: "radial-gradient(circle, #94AAEE, transparent 70%)" }} />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <p
-            className="font-medium mb-2 font-sanskrit text-sm tracking-widest uppercase"
-            style={{ background: "linear-gradient(135deg, #EC9DD4, #C4AAEE, #94AAEE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-          >
-            यह कैसे काम करता है
-          </p>
-          <h2 className="font-heading text-4xl md:text-5xl text-foreground mb-3">
+    <section className="py-10 bg-[#FFFDFB] px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Title enclosed in brackets */}
+        <div className="flex items-center justify-center gap-2 mb-12">
+          <span className="text-[#D45B0A] text-3xl font-light select-none">[</span>
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-[#4A1A0C] text-center px-1">
             {t("How It Works", "यह कैसे काम करता है")}
           </h2>
-          <div className="h-0.5 w-16 rounded-full mx-auto mb-4"
-            style={{ background: "linear-gradient(90deg, #EC9DD4, #C4AAEE, #94AAEE)" }} />
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            {t(
-              "From selection to blessings — our seamless process ensures your devotion reaches the divine.",
-              "चयन से आशीर्वाद तक — हमारी सरल प्रक्रिया सुनिश्चित करती है कि आपकी भक्ति दिव्यता तक पहुँचे।"
-            )}
-          </p>
+          <span className="text-[#D45B0A] text-3xl font-light select-none">]</span>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map(({ icon, en, hi, step }, i) => {
-            const text = lang === "hi" ? hi : en;
+ 
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, idx) => {
             return (
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.15 }}
-                className="relative group"
-              >
-                <div
-                  className="rounded-2xl p-6 h-full transition-all duration-300 bg-card-bg"
-                  style={{ border: "1px solid rgba(196,170,238,0.25)", boxShadow: "0 4px 20px rgba(196,170,238,0.08)" }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 30px rgba(148,170,238,0.18)";
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(148,170,238,0.45)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 20px rgba(196,170,238,0.08)";
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(196,170,238,0.25)";
-                  }}
-                >
-                  <div className="text-6xl mb-5 group-hover:scale-110 transition-transform duration-300">{icon}</div>
-                  <div className="font-heading text-5xl absolute top-4 right-4 leading-none opacity-10"
-                    style={{ background: "linear-gradient(135deg, #EC9DD4, #94AAEE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                    {step}
+              <div key={idx} className="flex flex-col items-center text-center relative">
+                {/* Icon Container with Floating Number Badge */}
+                <div className="relative w-20 h-20 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center mb-6 text-4xl select-none">
+                  {step.emoji}
+                  
+                  {/* Circular step number */}
+                  <div className="absolute -bottom-2 right-1/2 translate-x-1/2 w-6 h-6 rounded-full bg-[#E65100] text-white text-xs font-bold flex items-center justify-center border-2 border-white shadow">
+                    {step.number}
                   </div>
-                  <h3 className="font-heading text-foreground text-xl mb-3">{text.title}</h3>
-                  <p className="text-muted-foreground text-base leading-relaxed">{text.desc}</p>
                 </div>
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 text-2xl z-10 opacity-40"
-                    style={{ color: "#C4AAEE" }}>→</div>
-                )}
-              </motion.div>
+ 
+                {/* Step Info */}
+                <h3 className="text-base font-bold text-gray-800 mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-xs text-gray-500 font-medium max-w-[200px] leading-relaxed">
+                  {step.desc}
+                </p>
+              </div>
             );
           })}
         </div>

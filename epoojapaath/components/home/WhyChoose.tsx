@@ -1,0 +1,68 @@
+"use client";
+
+import { ShieldCheck, Video, Gift, Lock, Headphones } from "lucide-react";
+import { useLang } from "@/contexts/LanguageContext";
+
+export function WhyChoose() {
+  const { t } = useLang();
+
+  const reasons = [
+    {
+      icon: ShieldCheck,
+      title: t("500+ Verified", "500+ सत्यापित"),
+      desc: t("Temple Priests", "मंदिर के पुजारी"),
+    },
+    {
+      icon: Video,
+      title: t("Puja Photo &", "पूजा फोटो और"),
+      desc: t("Video Updates", "वीडियो अपडेट्स"),
+    },
+    {
+      icon: Gift,
+      title: t("Prasad Delivery", "प्रसाद डिलीवरी"),
+      desc: t("Pan India", "पूरे भारत में"),
+    },
+    {
+      icon: Lock,
+      title: t("100% Secure", "100% सुरक्षित"),
+      desc: t("Payments", "भुगतान प्रणाली"),
+    },
+    {
+      icon: Headphones,
+      title: t("24/7 Customer", "24/7 ग्राहक"),
+      desc: t("Support", "सहायता सेवा"),
+    },
+  ];
+
+  return (
+    <section className="py-8 bg-white px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-heading font-bold text-center text-[#4A1A0C] mb-8">
+          {t("Why Choose ePoojapaath?", "ePoojapaath क्यों चुनें?")}
+        </h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {reasons.map((item, idx) => {
+            const IconComp = item.icon;
+            return (
+              <div
+                key={idx}
+                className="flex flex-col items-center text-center p-5 rounded-2xl bg-[#FFF9F2] border border-[#FBE9E7] shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                  <IconComp size={24} className="text-[#D45B0A]" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-800 leading-tight">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-gray-500 font-medium mt-1 leading-tight">
+                  {item.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

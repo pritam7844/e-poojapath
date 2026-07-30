@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { formatCurrency } from "@/lib/utils";
 import { useLang } from "@/contexts/LanguageContext";
 
 type ChadawaItem = {
@@ -20,58 +19,60 @@ export function ChadawaSectionClient({ items }: { items: ChadawaItem[] }) {
   const { lang, t } = useLang();
 
   return (
-    <section className="section-padding max-w-7xl mx-auto">
-      <div className="text-center mb-12">
-        <p className="text-saffron font-medium mb-2 font-sanskrit">देवताओं को अर्पण</p>
-        <h2 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
-          {t("Chadawa Offerings", "चढ़ावा अर्पण")}
-        </h2>
-        <p className="text-muted-foreground max-w-xl mx-auto">
-          {t(
-            "Offer flowers, sweets, and sacred items to your chosen deity — delivered by temple pandits on your behalf.",
-            "अपने देवता को फूल, मिठाई और पवित्र वस्तुएं अर्पण करें — मंदिर के पंडितों द्वारा आपकी ओर से।"
-          )}
-        </p>
-      </div>
+    <section className="py-8 bg-white px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-[#4A1A0C]">
+              {t("Chadawa Seva", "चढ़ावा सेवा")}
+            </h2>
+            <p className="text-xs text-gray-500 font-medium mt-1">
+              {t("Offer sacred chadawas to receive divine blessings", "दिव्य आशीर्वाद प्राप्त करने के लिए पवित्र चढ़ावा चढ़ाएं")}
+            </p>
+          </div>
+          <Link href="/chadawa" className="text-sm font-bold text-[#E65100] hover:underline shrink-0">
+            {t("View All", "सभी देखें")}
+          </Link>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {items.map((item) => {
-          const name = lang === "hi" && item.nameHi ? item.nameHi : item.name;
-          const desc = lang === "hi" && item.descriptionHi ? item.descriptionHi : item.description;
-          return (
-            <div key={item._id} className="card-devotional group cursor-pointer">
-              <div className="relative h-40 mb-4 overflow-hidden rounded-xl">
-                <Image
-                  src={item.image || "/placeholder-puja.jpg"}
-                  alt={item.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark/40 to-transparent" />
-                {item.temple && (
-                  <div className="absolute top-2 left-2 bg-deep-gold/90 text-white text-[10px] px-2 py-0.5 rounded-full font-medium shadow-sm">
-                    🛕 {item.temple.name}
-                  </div>
-                )}
-              </div>
-              <h3 className="font-heading text-foreground text-lg mb-1">{name}</h3>
-              <p className="text-xs text-muted-foreground mb-1 font-sanskrit">{item.nameHi}</p>
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{desc}</p>
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-saffron text-lg">{formatCurrency(item.price)}</span>
-                <Link href={`/chadawa/${item._id}`} className="btn-saffron text-sm py-1.5 px-4">
-                  {t("Offer 🌸", "अर्पण करें 🌸")}
-                </Link>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        {/* Grid of Chadawas */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          {items.map((item) => {
+            const name = lang === "hi" && item.nameHi ? item.nameHi : item.name;
+            return (
+              <Link
+                href={`/chadawa/${item._id}`}
+                key={item._id}
+                className="flex flex-col bg-white border border-[#FBE9E7] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 p-3 text-center"
+              >
+                {/* Offering Image */}
+                <div className="relative h-32 md:h-44 w-full rounded-2xl overflow-hidden mb-3">
+                  <Image
+                    src={item.image || "/placeholder-puja.jpg"}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
 
-      <div className="text-center mt-10">
-        <Link href="/chadawa" className="btn-outline-gold">
-          {t("View All Offerings", "सभी अर्पण देखें")}
-        </Link>
+                {/* Offering Info */}
+                <div className="flex flex-col items-center justify-center flex-1 space-y-1 mt-1">
+                  {/* Small red flower icon */}
+                  <span className="text-red-600 text-xs select-none">🌺</span>
+                  
+                  <h3 className="text-xs md:text-sm font-bold text-gray-800 line-clamp-2 leading-tight">
+                    {name}
+                  </h3>
+                  
+                  <p className="text-[10px] text-gray-500 font-semibold mt-1">
+                    {t("From", "शुरुआत")} <span className="text-saffron font-bold">₹{item.price}</span>
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

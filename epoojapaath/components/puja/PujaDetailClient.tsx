@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
@@ -96,6 +96,28 @@ export function PujaDetailClient({
 }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // ── Sticky button state and observer ───────────────────────────────────────
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const [showStickyButton, setShowStickyButton] = useState(false);
+
+  useEffect(() => {
+    const currentRef = buttonRef.current;
+    if (!currentRef) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // If the static button container has scrolled past the top of the viewport
+        setShowStickyButton(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(currentRef);
+    return () => {
+      observer.unobserve(currentRef);
+    };
+  }, []);
 
   // ── Shared chadawa state ──────────────────────────────────────────────────
   const [selectedChadawa, setSelectedChadawa] = useState<SelectedChadawa[]>([]);
@@ -527,7 +549,7 @@ export function PujaDetailClient({
       {/* Mobile Package Selection (Inline Horizontal Row) */}
       {!showMobileSidebar && (
         <>
-          <div className="z-30 bg-background px-4 py-4 border-b border-border md:hidden">
+          <div ref={buttonRef} className="z-30 bg-background px-4 py-4 border-b border-border md:hidden">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-heading text-lg text-foreground">Select Package</h3>
             </div>
@@ -1068,6 +1090,28 @@ export function PujaDetailClient({
           </div>
         </div>
       </div>
+
+      {/* Sticky Book Now Button on Mobile */}
+      {showStickyButton && (
+        <>
+          <style dangerouslySetInnerHTML={{__html: `
+            @media (max-width: 767px) {
+              #whatsapp-floating-widget {
+                bottom: 16px !important;
+                right: 80px !important;
+              }
+            }
+          `}} />
+          <div className="md:hidden fixed bottom-4 right-[144px] z-50 animate-in fade-in duration-300">
+            <button
+              onClick={() => { setBookingStep("details"); setShowMobileSidebar(true); }}
+              className="bg-[#E65100] text-white font-bold text-xs px-5 py-3 rounded-full flex items-center gap-1.5 shadow-lg border border-white/20 whitespace-nowrap"
+            >
+              <span>Book Now at {formatCurrency(grandTotal)} 🪔</span>
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
 }

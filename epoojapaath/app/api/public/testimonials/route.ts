@@ -10,7 +10,7 @@ export async function GET() {
   try {
     await connectDB();
 
-    // Fetch the latest 6 reviews and populate user & temple names
+    // Fetch the latest 12 reviews and populate user & temple names
     const reviews = await Review.find()
       .populate("user", "name city")
       .populate("temple", "name")
@@ -19,9 +19,24 @@ export async function GET() {
       .limit(12)
       .lean();
 
+    const totalReviews = await Review.countDocuments();
+    const stats = await Review.aggregate([
+      {
+        $group: {
+          _id: null,
+          avgRating: { $avg: "$rating" }
+        }
+      }
+    ]);
+    const averageRating = stats.length > 0 && stats[0].avgRating 
+      ? Number(stats[0].avgRating.toFixed(1)) 
+      : 4.8;
+
     return NextResponse.json({
       success: true,
       data: reviews,
+      totalReviews,
+      averageRating,
     });
   } catch (error: any) {
     return NextResponse.json(

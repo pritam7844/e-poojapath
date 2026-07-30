@@ -1,51 +1,37 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useLang } from "@/contexts/LanguageContext";
 
 const fallbackTestimonials = [
   {
     name: "Priya Sharma",
-    city: "Delhi",
-    avatar: "🙏",
+    city: "Bangalore",
     rating: 5,
-    text: "I booked a Rudrabhishek at Kashi Vishwanath through ePoojapaath. The pandit performed it beautifully and I received a video within hours. Feeling truly blessed!",
-    puja: "Rudrabhishek",
+    text: "The puja was performed so beautifully. I received the video and prasad on time. Truly a divine experience with ePoojapaath.",
   },
   {
     name: "Ramesh Patel",
     city: "Ahmedabad",
-    avatar: "🕉️",
     rating: 5,
-    text: "Offered Chadawa to Mata Vaishno Devi on my mother's birthday from Ahmedabad. The process was seamless, prasad arrived in 3 days. Thank you ePoojapaath!",
-    puja: "Chadawa Offering",
+    text: "Offered Chadawa to Mata Vaishno Devi on my mother's birthday from Ahmedabad. The process was seamless, prasad arrived in 3 days.",
   },
   {
     name: "Ananya Gupta",
     city: "Mumbai",
-    avatar: "🌸",
     rating: 5,
-    text: "Used the Muhurat Finder for my new business launch. The auspicious timing was perfect — business is booming! The astrology tools are incredibly accurate.",
-    puja: "Muhurat Finder",
+    text: "Used the Muhurat Finder for my new business launch. The auspicious timing was perfect — business is booming!",
   },
 ];
 
-const AVATARS = ["🙏", "🕉️", "🌸", "🪔", "🌺", "✨"];
-
 export function Testimonials() {
+  const { t } = useLang();
   const [reviews, setReviews] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(1200);
 
   useEffect(() => {
-    setMounted(true);
-    setWindowWidth(window.innerWidth);
-    
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    
     fetch("/api/public/testimonials")
       .then((res) => res.json())
       .then((resData) => {
@@ -54,128 +40,108 @@ export function Testimonials() {
         }
       })
       .catch((err) => console.error("Error loading testimonials:", err));
-
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const displayList = reviews.length > 0
-    ? reviews.map((r, i) => ({
+    ? reviews.map((r) => ({
         name: r.reviewerName || r.booking?.devoteeName || r.user?.name || "Devotee",
         city: r.city || r.user?.city || "India",
-        avatar: AVATARS[i % AVATARS.length],
         rating: r.rating || 5,
         text: r.comment || "",
-        puja: r.temple?.name || "Verified Puja",
       }))
     : fallbackTestimonials;
 
-  // Determine number of visible items based on screen width
-  const visibleItems = !mounted ? 3 : windowWidth < 640 ? 1 : windowWidth < 1024 ? 2 : 3;
-  const maxIndex = Math.max(0, displayList.length - visibleItems);
+  const current = displayList[currentIndex] ?? displayList[0];
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
+  const handleNext = () => setCurrentIndex((prev) => (prev >= displayList.length - 1 ? 0 : prev + 1));
+  const handlePrev = () => setCurrentIndex((prev) => (prev <= 0 ? displayList.length - 1 : prev - 1));
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
+  // Auto-play timer for sliding testimonials
+  useEffect(() => {
+    if (displayList.length <= 1) return;
+    const timer = setInterval(() => {
+      handleNext();
+    }, 5000); // 5 seconds interval
+
+    return () => clearInterval(timer);
+  }, [currentIndex, displayList.length]);
 
   return (
-    <section className="section-padding bg-gradient-to-b from-card-bg to-cream overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 relative">
-        
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <p className="text-saffron font-medium mb-2 font-sanskrit">भक्तों के अनुभव</p>
-          <h2 className="font-heading text-4xl md:text-5xl text-foreground mb-4">Devotees Speak</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">Real stories from real devotees who found divine connection through ePoojapaath.</p>
+    <section className="py-12 bg-gradient-to-b from-[#FFFDFB] to-[#FFF9F5] px-4 md:px-8 border-y border-orange-100/30">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <p className="text-saffron font-medium mb-2 font-sanskrit">{t("भक्तों के अनुभव", "भक्तों के अनुभव")}</p>
+          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-[#4A1A0C]">
+            {t("What Devotees Say", "भक्तों के अनुभव")}
+          </h2>
+          <div className="h-1 w-16 bg-gradient-to-r from-saffron to-deep-gold rounded-full mx-auto mt-3" />
         </div>
-
-        {/* Carousel Wrapper */}
-        <div className="relative px-2 sm:px-10 md:px-12">
-          
-          {/* Navigation Arrows */}
-          {displayList.length > visibleItems && (
-            <>
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-deep-gold/25 text-saffron hover:bg-saffron hover:text-white hover:border-saffron transition-all duration-300 shadow-md flex items-center justify-center focus:outline-none"
-                aria-label="Previous testimonials"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                type="button"
-                onClick={handleNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-deep-gold/25 text-saffron hover:bg-saffron hover:text-white hover:border-saffron transition-all duration-300 shadow-md flex items-center justify-center focus:outline-none"
-                aria-label="Next testimonials"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </>
-          )}
-
-          {/* Testimonials Track */}
-          <div className="overflow-hidden w-full">
-            <div
-              className="flex transition-transform duration-500 ease-out"
-              style={{
-                transform: `translate3d(-${currentIndex * (100 / visibleItems)}%, 0, 0)`,
-                width: `${(displayList.length / visibleItems) * 100}%`,
-              }}
+ 
+        <div className="flex items-center gap-3 md:gap-8">
+          {displayList.length > 1 && (
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-orange-100/80 text-[#D45B0A] hover:bg-[#E65100] hover:text-white hover:border-[#E65100] hover:shadow-md transition-all duration-300 shadow-sm flex items-center justify-center active:scale-90"
+              aria-label="Previous testimonial"
             >
-              {displayList.map(({ name, city, avatar, rating, text, puja }, i) => (
-                <div
-                  key={`${name}-${i}`}
-                  style={{ width: `${100 / displayList.length}%` }}
-                  className="px-3 flex-shrink-0"
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (i % visibleItems) * 0.1 }}
-                    className="card-devotional h-full flex flex-col justify-between hover:shadow-lg transition-all duration-300 border border-deep-gold/15"
-                  >
-                    <div>
-                      {/* Reviewer Header */}
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-full bg-saffron/10 flex items-center justify-center text-2xl shrink-0">
-                          {avatar}
-                        </div>
-                        <div>
-                          <div className="font-heading text-foreground text-lg font-semibold">{name}</div>
-                          <div className="text-muted-foreground text-sm">{city}</div>
-                          <div className="flex gap-0.5 mt-1">
-                            {"★".repeat(rating).split("").map((s, idx) => (
-                              <span key={idx} className="text-saffron text-xs">{s}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Reviewer Comment */}
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4 italic">
-                        &ldquo;{text}&rdquo;
-                      </p>
-                    </div>
-
-                    {/* Puja Tag */}
-                    <div className="pt-2">
-                      <span className="inline-block bg-saffron/10 text-saffron text-[11px] px-3 py-1 rounded-full font-bold">
-                        {puja}
-                      </span>
-                    </div>
-                  </motion.div>
+              <ChevronLeft size={20} />
+            </button>
+          )}
+ 
+          <div className="flex-1 overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white border border-orange-100/50 rounded-3xl shadow-md p-6 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left relative overflow-hidden"
+              >
+                {/* Decorative quote mark */}
+                <div className="absolute top-2 right-4 text-9xl text-orange-500/5 font-serif select-none pointer-events-none">
+                  “
                 </div>
-              ))}
-            </div>
+ 
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-50 flex items-center justify-center text-xl font-extrabold text-[#D45B0A] shrink-0 shadow-inner select-none border border-orange-100/40">
+                  {current.name.charAt(0).toUpperCase()}
+                </div>
+                
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center justify-center md:justify-start gap-0.5 text-amber-500">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        size={16} 
+                        fill={i < current.rating ? "currentColor" : "none"} 
+                        stroke={i < current.rating ? "none" : "currentColor"} 
+                      />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 text-sm md:text-base leading-relaxed font-medium italic">
+                    &ldquo;{current.text}&rdquo;
+                  </p>
+                  <div className="text-xs md:text-sm font-extrabold text-[#4A1A0C] tracking-wide uppercase">
+                    — {current.name} <span className="text-saffron font-medium">({current.city})</span>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-          
+ 
+          {displayList.length > 1 && (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-orange-100/80 text-[#D45B0A] hover:bg-[#E65100] hover:text-white hover:border-[#E65100] hover:shadow-md transition-all duration-300 shadow-sm flex items-center justify-center active:scale-90"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
         </div>
-
       </div>
     </section>
   );

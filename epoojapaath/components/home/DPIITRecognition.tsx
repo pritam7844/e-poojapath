@@ -9,7 +9,7 @@ export function DPIITRecognition() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <section className="relative overflow-hidden bg-cream/30 dark:bg-dark-mandala/20 py-20 border-y border-saffron/10">
+    <section className="relative overflow-hidden bg-cream/30 dark:bg-dark-mandala/20 py-12 border-y border-saffron/10">
       {/* Decorative background glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none opacity-20 filter blur-3xl bg-saffron" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full pointer-events-none opacity-25 filter blur-3xl bg-lotus-purple" />
