@@ -62,16 +62,16 @@ export function NewHero() {
             </p>
 
             {/* CTA */}
-            <div className="flex flex-row gap-2 sm:gap-4 mt-1 w-full md:w-auto">
+            <div className="flex flex-row gap-1.5 sm:gap-4 mt-1 w-full md:w-auto">
               <Link
                 href="/puja"
-                className="btn-saffron text-[10px] sm:text-xs md:text-sm px-4 py-2 md:px-6 md:py-2.5 font-bold tracking-wide shadow-lg shadow-saffron/20 text-center flex-1 md:flex-none whitespace-nowrap"
+                className="btn-saffron text-[8px] min-[360px]:text-[9px] min-[400px]:text-[10px] sm:text-xs md:text-sm px-1.5 py-2 min-[360px]:px-3 md:px-6 md:py-2.5 font-bold tracking-wide shadow-lg shadow-saffron/20 text-center flex-1 sm:flex-none whitespace-nowrap"
               >
                 {t("BOOK PUJA 🪔", "पूजा बुक करें 🪔")}
               </Link>
               <Link
                 href="/chadawa"
-                className="btn-outline-lotus text-[10px] sm:text-xs md:text-sm px-4 py-2 md:px-6 md:py-2.5 font-bold tracking-wide text-center flex-1 md:flex-none whitespace-nowrap"
+                className="btn-outline-lotus text-[8px] min-[360px]:text-[9px] min-[400px]:text-[10px] sm:text-xs md:text-sm px-1.5 py-2 min-[360px]:px-3 md:px-6 md:py-2.5 font-bold tracking-wide text-center flex-1 sm:flex-none whitespace-nowrap"
               >
                 {t("BOOK CHADAVA 🌸", "चढ़ावा अर्पण करें 🌸")}
               </Link>
