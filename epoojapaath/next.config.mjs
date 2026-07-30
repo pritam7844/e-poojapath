@@ -5,7 +5,6 @@ const withNextIntl = createNextIntlPlugin("./lib/i18n.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "images.unsplash.com" },

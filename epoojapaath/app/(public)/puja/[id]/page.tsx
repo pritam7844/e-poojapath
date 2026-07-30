@@ -1,6 +1,7 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import Image from "next/image";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { Star, MapPin, Clock } from "lucide-react";
 import { PublicPage } from "@/components/shared/PublicPage";
@@ -16,12 +17,33 @@ import Link from "next/link";
 type PujaWithTemple = IPuja & { _id: string; temple: ITemple & { _id: string } };
 type ChadawaItem = IChadawa & { _id: string };
 
-async function getPujaDetail(id: string): Promise<PujaWithTemple | null> {
+const getPujaDetail = cache(async (id: string): Promise<PujaWithTemple | null> => {
   await connectDB();
   const puja = await Puja.findById(id)
     .populate("temple", "name slug coverImage description location rating reviewCount timings images")
     .lean();
   return puja as unknown as PujaWithTemple | null;
+});
+
+export async function generateStaticParams() {
+  await connectDB();
+  const pujas = await Puja.find({ isActive: true }).select("_id").lean();
+  return pujas.map((p) => ({ id: (p._id as { toString(): string }).toString() }));
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const puja = await getPujaDetail(params.id).catch(() => null);
+  if (!puja) return { title: "Puja Not Found" };
+  const templeName = typeof puja.temple === "object" ? puja.temple.name : "";
+  const title = templeName ? `${puja.name} at ${templeName}` : puja.name;
+  const description =
+    puja.description?.slice(0, 160) ||
+    `Book ${puja.name} online with ePoojapaath — authentic Vedic rituals performed by verified temple priests.`;
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: puja.image ? [{ url: puja.image }] : undefined },
+  };
 }
 
 async function getTempleChadawa(templeId: string): Promise<ChadawaItem[]> {

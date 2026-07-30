@@ -8,7 +8,7 @@ export const devToast = {
         background: "#FDF8F0",
         border: "1px solid #D4820A",
         color: "#0F0A05",
-        fontFamily: "Hind, sans-serif",
+        fontFamily: "var(--font-body), sans-serif",
       },
     }),
 
@@ -19,7 +19,7 @@ export const devToast = {
         background: "#FFF0F0",
         border: "1px solid #C2567A",
         color: "#0F0A05",
-        fontFamily: "Hind, sans-serif",
+        fontFamily: "var(--font-body), sans-serif",
       },
     }),
 
@@ -29,7 +29,7 @@ export const devToast = {
       style: {
         background: "#FDF8F0",
         border: "1px solid #8B6DB5",
-        fontFamily: "Hind, sans-serif",
+        fontFamily: "var(--font-body), sans-serif",
       },
     }),
 
@@ -41,7 +41,7 @@ export const devToast = {
       style: {
         background: "linear-gradient(135deg, #FDF8F0, #FFF5E1)",
         border: "1px solid #B8860B",
-        fontFamily: "Hind, sans-serif",
+        fontFamily: "var(--font-body), sans-serif",
       },
     }),
 };

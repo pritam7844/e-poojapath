@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
@@ -36,9 +36,14 @@ async function getSubscriptionPuja() {
 }
 
 export default async function HomePage() {
-  const heroAds = serialize(await getActiveAds("hero").catch(() => [])) as any[];
-  const sectionAds = serialize(await getActiveAds("between-sections").catch(() => [])) as any[];
-  const subscriptionPuja = serialize(await getSubscriptionPuja().catch(() => null));
+  const [heroAdsRaw, sectionAdsRaw, subscriptionPujaRaw] = await Promise.all([
+    getActiveAds("hero").catch(() => []),
+    getActiveAds("between-sections").catch(() => []),
+    getSubscriptionPuja().catch(() => null),
+  ]);
+  const heroAds = serialize(heroAdsRaw) as any[];
+  const sectionAds = serialize(sectionAdsRaw) as any[];
+  const subscriptionPuja = serialize(subscriptionPujaRaw);
 
   return (
     <>

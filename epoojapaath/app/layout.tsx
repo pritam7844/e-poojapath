@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Yatra_One, Hind, Tiro_Devanagari_Sanskrit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -6,6 +7,26 @@ import { Toaster } from "sonner";
 import type { Viewport } from "next";
 import Script from "next/script";
 import { FacebookPixel } from "@/components/shared/FacebookPixel";
+
+const yatraOne = Yatra_One({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
+});
+const hind = Hind({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body",
+});
+const tiroDevanagariSanskrit = Tiro_Devanagari_Sanskrit({
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sanskrit",
+});
 
 export const viewport: Viewport = {
   themeColor: "#FFFFFF",
@@ -42,10 +63,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${yatraOne.variable} ${hind.variable} ${tiroDevanagariSanskrit.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID && (
           <Script id="fb-pixel" strategy="afterInteractive">
             {`
@@ -82,7 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Toaster
               position="top-right"
               toastOptions={{
-                style: { fontFamily: "Hind, sans-serif" },
+                style: { fontFamily: "var(--font-body), sans-serif" },
               }}
             />
           </LanguageProvider>

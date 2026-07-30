@@ -68,9 +68,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        heading: ["Yatra One", "serif"],
-        body: ["Hind", "sans-serif"],
-        sanskrit: ["Tiro Devanagari Sanskrit", "serif"],
+        heading: ["var(--font-heading)", "serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        sanskrit: ["var(--font-sanskrit)", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

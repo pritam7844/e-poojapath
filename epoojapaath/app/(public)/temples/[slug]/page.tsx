@@ -1,11 +1,11 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicPage } from "@/components/shared/PublicPage";
 import { MandalaDivider } from "@/components/shared/MandalaDivider";
-import { getTempleBySlug } from "@/services/temple.service";
+import { getTempleBySlug, getApprovedTemples } from "@/services/temple.service";
 import { connectDB } from "@/lib/db";
 import Puja from "@/models/Puja";
 import Chadawa from "@/models/Chadawa";
@@ -14,6 +14,11 @@ import User from "@/models/User";
 import { formatCurrency, serialize } from "@/lib/utils";
 import { MapPin, Phone, Mail, Globe, Clock, Star, Instagram } from "lucide-react";
 import { TempleImageSlider } from "@/components/temple/TempleImageSlider";
+
+export async function generateStaticParams() {
+  const temples = await getApprovedTemples().catch(() => []);
+  return (temples as { slug: string }[]).map((t) => ({ slug: t.slug }));
+}
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const temple = serialize(await getTempleBySlug(params.slug).catch(() => null)) as any;

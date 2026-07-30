@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -20,6 +20,12 @@ interface SpecialChadawaItem {
   image?: string;
   price: number;
   items?: string[];
+}
+
+export async function generateStaticParams() {
+  await connectDB();
+  const temples = await Temple.find({ status: "approved" }).select("slug").lean();
+  return temples.map((t) => ({ slug: t.slug as string }));
 }
 
 export default async function TempleSpecialChadawaPage({ params }: { params: { slug: string } }) {
