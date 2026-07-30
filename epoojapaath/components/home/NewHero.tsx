@@ -62,16 +62,16 @@ export function NewHero() {
             </p>
 
             {/* CTA */}
-            <div className="flex flex-row gap-2 sm:gap-4 mt-1 w-full">
+            <div className="flex flex-row gap-2 sm:gap-4 mt-1 w-full md:w-auto">
               <Link
                 href="/puja"
-                className="btn-saffron text-[10px] sm:text-sm md:text-base px-2 py-2 sm:px-8 sm:py-3 font-bold tracking-wide shadow-lg shadow-saffron/20 text-center flex-1 whitespace-nowrap"
+                className="btn-saffron text-[10px] sm:text-xs md:text-sm px-4 py-2 md:px-6 md:py-2.5 font-bold tracking-wide shadow-lg shadow-saffron/20 text-center flex-1 md:flex-none whitespace-nowrap"
               >
                 {t("BOOK PUJA 🪔", "पूजा बुक करें 🪔")}
               </Link>
               <Link
                 href="/chadawa"
-                className="btn-outline-lotus text-[10px] sm:text-sm md:text-base px-2 py-2 sm:px-8 sm:py-3 font-bold tracking-wide text-center flex-1 whitespace-nowrap"
+                className="btn-outline-lotus text-[10px] sm:text-xs md:text-sm px-4 py-2 md:px-6 md:py-2.5 font-bold tracking-wide text-center flex-1 md:flex-none whitespace-nowrap"
               >
                 {t("BOOK CHADAVA 🌸", "चढ़ावा अर्पण करें 🌸")}
               </Link>
