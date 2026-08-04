@@ -127,12 +127,17 @@ export function PujaDetailClient({
   const scrollChadawa = (direction: "left" | "right") => {
     if (chadawaSliderRef.current) {
       const container = chadawaSliderRef.current;
-      const scrollAmount = container.clientWidth * 0.7;
-      const targetScroll = container.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount);
-      container.scrollTo({
-        left: targetScroll,
-        behavior: "smooth"
-      });
+      const scrollAmount = container.clientWidth * 0.75;
+      const scrollTarget = direction === "left" ? -scrollAmount : scrollAmount;
+      
+      try {
+        container.scrollBy({
+          left: scrollTarget,
+          behavior: "smooth"
+        });
+      } catch (e) {
+        container.scrollLeft += scrollTarget;
+      }
     }
   };
 
@@ -205,7 +210,7 @@ export function PujaDetailClient({
   const grandTotal = pujaPrice + chadawaTotal + prasadPrice + Number(form.dakshina || 0);
 
   // ── Chadawa section renderer ────────────────────────────────────────────────
-  const renderChadawaSection = () => {
+  const renderChadawaSection = (isMobileLayout: boolean = false) => {
     return (
       <section className="relative">
         <div className="flex items-center justify-between mb-4">
@@ -277,11 +282,11 @@ export function PujaDetailClient({
             </div>
           ) : (
             /* Sliding Carousel View */
-            <div className="relative px-4">
+            <div className="relative px-6">
               {/* Left Arrow */}
               <button
-                onClick={(e) => { e.stopPropagation(); scrollChadawa("left"); }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-background/95 border border-border flex items-center justify-center shadow hover:bg-background transition text-foreground"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollChadawa("left"); }}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-background/95 border border-border flex items-center justify-center shadow-md hover:bg-background active:scale-95 transition text-foreground cursor-pointer pointer-events-auto"
                 type="button"
                 aria-label="Scroll Left"
               >
@@ -292,8 +297,8 @@ export function PujaDetailClient({
 
               {/* Right Arrow */}
               <button
-                onClick={(e) => { e.stopPropagation(); scrollChadawa("right"); }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-background/95 border border-border flex items-center justify-center shadow hover:bg-background transition text-foreground"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollChadawa("right"); }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-background/95 border border-border flex items-center justify-center shadow-md hover:bg-background active:scale-95 transition text-foreground cursor-pointer pointer-events-auto"
                 type="button"
                 aria-label="Scroll Right"
               >
@@ -303,8 +308,8 @@ export function PujaDetailClient({
               </button>
 
               <div
-                ref={chadawaSliderRef}
-                className="flex overflow-x-auto snap-x snap-mandatory gap-3 scroll-smooth pb-3 px-0.5 no-scrollbar"
+                ref={isMobileLayout ? chadawaSliderRef : null}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-3 scroll-smooth pb-3 px-1 no-scrollbar relative z-10"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 {chadawaItems.map((item) => {
@@ -883,7 +888,7 @@ export function PujaDetailClient({
           {/* Render Chadawa directly below Book Now on Mobile */}
           {chadawaItems.length > 0 && (
             <div className="block lg:hidden px-4 pt-6 pb-2">
-              {renderChadawaSection()}
+              {renderChadawaSection(true)}
             </div>
           )}
         </>
@@ -983,7 +988,7 @@ export function PujaDetailClient({
             {/* ── CHADAWA SECTION (Desktop Only) ── */}
             {chadawaItems.length > 0 && (
               <div className="hidden lg:block">
-                {renderChadawaSection()}
+                {renderChadawaSection(false)}
               </div>
             )}
 
