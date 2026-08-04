@@ -121,6 +121,20 @@ export function PujaDetailClient({
 
   // ── Shared chadawa state ──────────────────────────────────────────────────
   const [selectedChadawa, setSelectedChadawa] = useState<SelectedChadawa[]>([]);
+  const [showAllMobileChadawa, setShowAllMobileChadawa] = useState(false);
+  const chadawaSliderRef = useRef<HTMLDivElement>(null);
+
+  const scrollChadawa = (direction: "left" | "right") => {
+    if (chadawaSliderRef.current) {
+      const container = chadawaSliderRef.current;
+      const scrollAmount = container.clientWidth * 0.7;
+      const targetScroll = container.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount);
+      container.scrollTo({
+        left: targetScroll,
+        behavior: "smooth"
+      });
+    }
+  };
 
   // ── Booking sidebar state ─────────────────────────────────────────────────
   const [showPackages, setShowPackages] = useState(false);
@@ -191,91 +205,223 @@ export function PujaDetailClient({
   const grandTotal = pujaPrice + chadawaTotal + prasadPrice + Number(form.dakshina || 0);
 
   // ── Chadawa section renderer ────────────────────────────────────────────────
-  const renderChadawaSection = () => (
-    <section>
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="font-heading text-2xl text-foreground">Add Chadawa to Puja</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
-        </div>
-        {selectedChadawa.length > 0 && (
-          <div className="bg-saffron/10 border border-saffron/30 rounded-full px-3 py-1 flex items-center gap-1.5">
-            <span className="text-saffron text-xs font-semibold">{selectedChadawa.length} selected</span>
-            <span className="text-saffron text-xs">· {formatCurrency(chadawaTotal)}</span>
+  const renderChadawaSection = () => {
+    return (
+      <section className="relative">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-heading text-lg md:text-2xl text-foreground">
+              Add Sacred Chadawa <span className="text-xs font-semibold text-muted-foreground ml-1">(Optional)</span>
+            </h2>
+            <p className="text-xs md:text-sm text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
           </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {chadawaItems.map((item) => {
-          const selected = isSelected(item._id);
-          const sc = selectedChadawa.find((s) => s.item._id === item._id);
-          return (
-            <div
-              key={item._id}
-              className={`card-devotional overflow-hidden p-0 group transition-all duration-200 ${selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10" : ""}`}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAllMobileChadawa(!showAllMobileChadawa)}
+              type="button"
+              className="text-saffron text-xs font-semibold hover:underline md:hidden bg-saffron/5 border border-saffron/20 rounded-full px-3 py-1"
             >
-              <div className="relative h-36 overflow-hidden">
-                <Image
-                  src={item.image || "/kasbeswari.jpg"}
-                  alt={item.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
-                {selected && (
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-saffron rounded-full flex items-center justify-center shadow">
-                    <Check size={13} className="text-white" strokeWidth={3} />
-                  </div>
-                )}
-                <div className="absolute bottom-2 left-3 right-3">
-                  <p className="text-white font-heading text-sm leading-tight line-clamp-2">{item.name}</p>
-                </div>
+              {showAllMobileChadawa ? "Show Less" : "View All"}
+            </button>
+            {selectedChadawa.length > 0 && (
+              <div className="bg-saffron/10 border border-saffron/30 rounded-full px-2.5 py-0.5 md:px-3 md:py-1 flex items-center gap-1">
+                <span className="text-saffron text-xs font-semibold">{selectedChadawa.length} selected</span>
               </div>
+            )}
+          </div>
+        </div>
 
-              <div className="p-3">
-                <p className="font-sanskrit text-saffron/80 text-xs mb-0.5">{item.nameHi}</p>
-                <p className="text-muted-foreground text-xs line-clamp-1 mb-3">{item.description}</p>
-
-                <div className="flex items-center justify-between">
-                  <p className="font-heading text-foreground text-base">₹{item.price}</p>
-                  {selected && sc ? (
-                    <div className="flex items-center gap-1.5">
-                      <button onClick={() => updateQty(item._id, -1)} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Minus size={10} /></button>
-                      <span className="font-heading text-sm text-foreground w-5 text-center">{sc.qty}</span>
-                      <button onClick={() => updateQty(item._id, 1)} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Plus size={10} /></button>
-                      <button onClick={() => toggleChadawa(item)} className="ml-1 w-6 h-6 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition"><X size={11} /></button>
+        {/* Mobile Carousel View / Grid Toggle */}
+        <div className="block md:hidden">
+          {showAllMobileChadawa ? (
+            /* Grid View */
+            <div className="grid grid-cols-2 gap-3 px-1">
+              {chadawaItems.map((item) => {
+                const selected = isSelected(item._id);
+                return (
+                  <div
+                    key={item._id}
+                    onClick={() => toggleChadawa(item)}
+                    className={`card-devotional cursor-pointer overflow-hidden p-0 group transition-all duration-200 w-full flex flex-col justify-between ${
+                      selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10 border-saffron bg-saffron/5" : "border-border bg-card"
+                    }`}
+                  >
+                    <div>
+                      <div className="relative h-24 w-full overflow-hidden">
+                        <Image
+                          src={item.image || "/kasbeswari.jpg"}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="p-2">
+                        <p className="font-heading text-xs text-foreground line-clamp-1 leading-tight">{item.name}</p>
+                        <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
+                      </div>
                     </div>
-                  ) : (
-                    <button onClick={() => toggleChadawa(item)} className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition shadow-sm flex items-center gap-1"><Plus size={11} /> Add</button>
-                  )}
-                </div>
-                {selected && sc && sc.qty > 1 && <p className="text-xs text-saffron font-medium mt-2 text-right">Subtotal: ₹{item.price * sc.qty}</p>}
+
+                    <div className="p-2 pt-0 flex items-center justify-between">
+                      <p className="font-heading text-sm text-foreground">₹{item.price}</p>
+                      <div
+                        className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                          selected ? "bg-saffron border-saffron text-white" : "border-muted-foreground/30 bg-background"
+                        }`}
+                      >
+                        {selected && <Check size={10} strokeWidth={3} />}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Sliding Carousel View */
+            <div className="relative px-4">
+              {/* Left Arrow */}
+              <button
+                onClick={(e) => { e.stopPropagation(); scrollChadawa("left"); }}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-background/95 border border-border flex items-center justify-center shadow hover:bg-background transition text-foreground"
+                type="button"
+                aria-label="Scroll Left"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Right Arrow */}
+              <button
+                onClick={(e) => { e.stopPropagation(); scrollChadawa("right"); }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-background/95 border border-border flex items-center justify-center shadow hover:bg-background transition text-foreground"
+                type="button"
+                aria-label="Scroll Right"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <div
+                ref={chadawaSliderRef}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-3 scroll-smooth pb-3 px-0.5 no-scrollbar"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {chadawaItems.map((item) => {
+                  const selected = isSelected(item._id);
+                  return (
+                    <div
+                      key={item._id}
+                      onClick={() => toggleChadawa(item)}
+                      className={`card-devotional cursor-pointer overflow-hidden p-0 group transition-all duration-200 w-[calc(50%-6px)] shrink-0 snap-start flex flex-col justify-between ${
+                        selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10 border-saffron bg-saffron/5" : "border-border bg-card"
+                      }`}
+                    >
+                      <div>
+                        <div className="relative h-24 w-full overflow-hidden">
+                          <Image
+                            src={item.image || "/kasbeswari.jpg"}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-2">
+                          <p className="font-heading text-xs text-foreground line-clamp-1 leading-tight">{item.name}</p>
+                          <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="p-2 pt-0 flex items-center justify-between">
+                        <p className="font-heading text-sm text-foreground">₹{item.price}</p>
+                        <div
+                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                            selected ? "bg-saffron border-saffron text-white" : "border-muted-foreground/30 bg-background"
+                          }`}
+                        >
+                          {selected && <Check size={10} strokeWidth={3} />}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {selectedChadawa.length > 0 && (
-        <div className="mt-4 bg-gradient-to-r from-saffron/5 to-deep-gold/5 border border-saffron/20 rounded-xl p-4">
-          <p className="text-xs font-semibold text-saffron mb-2 flex items-center gap-1.5">
-            <Gift size={13} /> Selected Chadawa — {formatCurrency(chadawaTotal)} added to your booking
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {selectedChadawa.map((sc) => (
-              <div key={sc.item._id} className="flex items-center gap-1.5 bg-background border border-saffron/30 rounded-full px-2.5 py-1 text-xs">
-                <span className="text-foreground">{sc.item.name}</span>
-                {sc.qty > 1 && <span className="text-muted-foreground">×{sc.qty}</span>}
-                <span className="text-saffron font-medium">₹{sc.item.price * sc.qty}</span>
-                <button onClick={() => toggleChadawa(sc.item)} className="text-muted-foreground hover:text-red-400 transition ml-0.5"><X size={10} /></button>
-              </div>
-            ))}
-          </div>
+          )}
         </div>
-      )}
-    </section>
-  );
+
+        {/* Desktop Grid View */}
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4">
+          {chadawaItems.map((item) => {
+            const selected = isSelected(item._id);
+            const sc = selectedChadawa.find((s) => s.item._id === item._id);
+            return (
+              <div
+                key={item._id}
+                className={`card-devotional overflow-hidden p-0 group transition-all duration-200 ${selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10" : ""}`}
+              >
+                <div className="relative h-36 overflow-hidden">
+                  <Image
+                    src={item.image || "/kasbeswari.jpg"}
+                    alt={item.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
+                  {selected && (
+                    <div className="absolute top-2 right-2 w-6 h-6 bg-saffron rounded-full flex items-center justify-center shadow">
+                      <Check size={13} className="text-white" strokeWidth={3} />
+                    </div>
+                  )}
+                  <div className="absolute bottom-2 left-3 right-3">
+                    <p className="text-white font-heading text-sm leading-tight line-clamp-2">{item.name}</p>
+                  </div>
+                </div>
+
+                <div className="p-3">
+                  <p className="font-sanskrit text-saffron/80 text-xs mb-0.5">{item.nameHi}</p>
+                  <p className="text-muted-foreground text-xs line-clamp-1 mb-3">{item.description}</p>
+
+                  <div className="flex items-center justify-between">
+                    <p className="font-heading text-foreground text-base">₹{item.price}</p>
+                    {selected && sc ? (
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, -1); }} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Minus size={10} /></button>
+                        <span className="font-heading text-sm text-foreground w-5 text-center">{sc.qty}</span>
+                        <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, 1); }} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Plus size={10} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="ml-1 w-6 h-6 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition"><X size={11} /></button>
+                      </div>
+                    ) : (
+                      <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition shadow-sm flex items-center gap-1"><Plus size={11} /> Add</button>
+                    )}
+                  </div>
+                  {selected && sc && sc.qty > 1 && <p className="text-xs text-saffron font-medium mt-2 text-right">Subtotal: ₹{item.price * sc.qty}</p>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {selectedChadawa.length > 0 && (
+          <div className="mt-4 bg-gradient-to-r from-saffron/5 to-deep-gold/5 border border-saffron/20 rounded-xl p-4">
+            <p className="text-xs font-semibold text-saffron mb-2 flex items-center gap-1.5">
+              <Gift size={13} /> Selected Chadawa — {formatCurrency(chadawaTotal)} added to your booking
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {selectedChadawa.map((sc) => (
+                <div key={sc.item._id} className="flex items-center gap-1.5 bg-background border border-saffron/30 rounded-full px-2.5 py-1 text-xs">
+                  <span className="text-foreground">{sc.item.name}</span>
+                  {sc.qty > 1 && <span className="text-muted-foreground">×{sc.qty}</span>}
+                  <span className="text-saffron font-medium">₹{sc.item.price * sc.qty}</span>
+                  <button onClick={() => toggleChadawa(sc.item)} className="text-muted-foreground hover:text-red-400 transition ml-0.5"><X size={10} /></button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  };
 
   // ── Chadawa helpers ───────────────────────────────────────────────────────
   function isSelected(id: string) {
@@ -472,7 +618,7 @@ export function PujaDetailClient({
   return (
     <>
       {/* ── Hero Banner ── */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden">
+      <div className="relative h-80 md:h-96 w-full overflow-hidden">
         <Image
           src={puja.image || (temple.images?.[0] ?? temple.coverImage)}
           alt={puja.name}
@@ -480,7 +626,7 @@ export function PujaDetailClient({
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/20" />
         
         {/* Subscription Badge */}
         {puja.isSubscription && (
@@ -494,14 +640,55 @@ export function PujaDetailClient({
           </button>
         )}
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 max-w-7xl mx-auto">
-          <p className="text-white/80 text-sm font-medium mb-1 flex items-center gap-1.5">
+        <div className="absolute bottom-0 left-0 right-0 p-6 max-w-7xl mx-auto drop-shadow-md">
+          <p className="text-white/90 text-sm font-medium mb-1.5 flex items-center gap-1.5">
             <span>🛕 Puja Booking at <span className="text-saffron font-semibold">{temple.name}</span></span>
           </p>
           <h1 className="text-white font-heading text-2xl md:text-3xl leading-tight max-w-3xl">
             {puja.name}
           </h1>
-          <p className="text-white/70 font-sanskrit text-base mt-1">{puja.nameHi}</p>
+          {puja.nameHi && (
+            <p className="text-white/80 font-sanskrit text-sm md:text-base mt-1">{puja.nameHi}</p>
+          )}
+
+          {/* Hero Badges / Features Row */}
+          <div className="mt-4 pt-3.5 border-t border-white/10 grid grid-cols-4 gap-2 text-center max-w-3xl">
+            <div className="flex flex-col items-center">
+              <div className="text-amber-400 mb-1">
+                <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <span className="text-[9px] md:text-xs text-white/90 font-medium leading-tight">Personalized Sankalp</span>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="text-amber-400 mb-1">
+                <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V11m0 0l-3-3m3 3l3-3M5 21h14a2 2 0 002-2v-5a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2zm7-17l7 5H5l7-5z" />
+                </svg>
+              </div>
+              <span className="text-[9px] md:text-xs text-white/90 font-medium leading-tight">Puja by Temple Priests</span>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="text-amber-400 mb-1">
+                <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <span className="text-[9px] md:text-xs text-white/90 font-medium leading-tight">WhatsApp Photo/Video</span>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="text-amber-400 mb-1">
+                <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <span className="text-[9px] md:text-xs text-white/90 font-medium leading-tight">Prasad Delivery (Available)</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -587,6 +774,110 @@ export function PujaDetailClient({
             >
               Book Now at {formatCurrency(grandTotal)} 🪔
             </button>
+
+            {/* Trusted subtext */}
+            <p className="text-center text-xs text-muted-foreground mt-2.5 font-medium flex items-center justify-center gap-1">
+              <span>Trusted by</span>
+              <span className="text-saffron font-semibold">514+ Devotees</span>
+              <span>•</span>
+              <span className="text-saffron font-semibold">5.0 ★ Rating</span>
+            </p>
+
+            {/* Why Devotees Trust ePoojapaath */}
+            <div className="mt-5 border border-amber-100 rounded-2xl p-4 bg-amber-50/10">
+              <h4 className="text-center font-heading text-sm text-foreground mb-4">
+                Why Devotees <span className="text-saffron font-semibold">Trust ePoojapaath</span>
+              </h4>
+              
+              <div className="grid grid-cols-5 gap-1 mb-4 text-center">
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-full bg-saffron/5 border border-saffron/10 flex items-center justify-center text-saffron mb-1">
+                    {/* Official Temple Puja (Temple/Mandir outline) */}
+                    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21V11m0 0l-3-3m3 3l3-3M5 21h14a2 2 0 002-2v-5a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2zm7-17l7 5H5l7-5z" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] leading-tight text-foreground font-medium">Official Temple Puja</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-full bg-saffron/5 border border-saffron/10 flex items-center justify-center text-saffron mb-1">
+                    {/* 100% Secure Payment */}
+                    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] leading-tight text-foreground font-medium">100% Secure Payment</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-full bg-saffron/5 border border-saffron/10 flex items-center justify-center text-saffron mb-1">
+                    {/* Video Proof on WhatsApp */}
+                    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] leading-tight text-foreground font-medium">Video Proof on WhatsApp</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-full bg-saffron/5 border border-saffron/10 flex items-center justify-center text-saffron mb-1">
+                    {/* Experienced Temple Priests */}
+                    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] leading-tight text-foreground font-medium">Experienced Temple Priests</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-full bg-saffron/5 border border-saffron/10 flex items-center justify-center text-saffron mb-1">
+                    {/* Prasad Delivery */}
+                    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] leading-tight text-foreground font-medium">Prasad Delivery Across India</span>
+                </div>
+              </div>
+
+              {/* Bottom statistics strip */}
+              <div className="bg-amber-50/40 border border-amber-100/60 rounded-xl p-2.5 flex justify-between items-center text-center">
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 text-saffron stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span className="text-xs font-bold text-foreground">514+</span>
+                  </div>
+                  <span className="text-[8px] text-muted-foreground font-medium mt-0.5">Pujas Completed</span>
+                </div>
+                
+                <div className="h-6 w-px bg-amber-100" />
+
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 text-saffron stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <span className="text-xs font-bold text-foreground">3+</span>
+                  </div>
+                  <span className="text-[8px] text-muted-foreground font-medium mt-0.5">Verified Temples</span>
+                </div>
+
+                <div className="h-6 w-px bg-amber-100" />
+
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3 h-3 text-saffron fill-saffron" viewBox="0 0 24 24">
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                    </svg>
+                    <span className="text-xs font-bold text-foreground">5.0</span>
+                  </div>
+                  <span className="text-[8px] text-muted-foreground font-medium mt-0.5">Devotee Rating</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Render Chadawa directly below Book Now on Mobile */}
