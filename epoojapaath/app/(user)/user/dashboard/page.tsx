@@ -14,11 +14,11 @@ export default async function UserDashboard() {
   const bookings = await getUserBookings(session.user.id!).catch(() => []) as (IBooking & { _id: string })[];
 
   return (
-    <DashboardShell
-      title={`Welcome, ${session.user.name} 🙏`}
-      subtitle="Your devotional dashboard — track bookings and divine connections."
-    >
-      <UserDashboardClient initialBookings={JSON.parse(JSON.stringify(bookings))} />
+    <DashboardShell title="">
+      <UserDashboardClient 
+        userName={session.user.name || "Devotee"} 
+        initialBookings={JSON.parse(JSON.stringify(bookings))} 
+      />
     </DashboardShell>
   );
 }

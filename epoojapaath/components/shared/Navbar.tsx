@@ -43,8 +43,11 @@ export function Navbar() {
         { en: "Chadawa", hi: "चढ़ावा", href: "/chadawa" },
         { en: "Blog", hi: "ब्लॉग", href: "/blog" },
         { en: "Astro", hi: "ज्योतिष", href: "/astro" },
-        { en: "Dashboard", hi: "डैशबोर्ड", href: dashboardHref },
-        { en: "Profile", hi: "प्रोफ़ाइल", href: "/user/profile" },
+        { 
+          en: session?.user?.role === "admin" ? "Dashboard" : "My Booking", 
+          hi: session?.user?.role === "admin" ? "डैशबोर्ड" : "मेरी बुकिंग", 
+          href: dashboardHref 
+        },
       ]
     : [
         { en: "Home", hi: "होम", href: "/" },
