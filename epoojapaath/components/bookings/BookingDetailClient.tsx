@@ -503,13 +503,13 @@ export function BookingDetailClient({
       </div>
 
       {/* Saffron Sanskrit Shloka Box (Full Width) */}
-      <div className="mt-8 bg-saffron/10 border border-saffron/20 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-4 max-w-5xl mx-auto">
+      <div className="mt-8 bg-saffron/10 border border-saffron/20 rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center text-center gap-3 max-w-5xl mx-auto">
         <div className="text-4xl text-saffron select-none">ॐ</div>
-        <div className="text-center md:text-left space-y-2">
+        <div className="space-y-2">
           <p className="font-sanskrit text-saffron/90 text-sm md:text-base leading-relaxed font-semibold">
             सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद् दुःखभाग्भवेत्॥
           </p>
-          <p className="text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed">
+          <p className="text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed max-w-2xl mx-auto">
             May all sentient beings be at peace, may no one suffer from illnesses, may all see auspiciousness, and may none experience misery.
           </p>
         </div>
