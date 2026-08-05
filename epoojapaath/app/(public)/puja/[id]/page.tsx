@@ -10,6 +10,8 @@ import { PujaCountdownTimer } from "@/components/puja/PujaCountdownTimer";
 import { connectDB } from "@/lib/db";
 import Puja from "@/models/Puja";
 import Chadawa from "@/models/Chadawa";
+import Booking from "@/models/Booking";
+import { auth } from "@/lib/auth";
 import type { IPuja, ITemple, IChadawa } from "@/types";
 import { serialize } from "@/lib/utils";
 import Link from "next/link";
@@ -87,6 +89,31 @@ export default async function PujaDetailPage({ params }: { params: { id: string 
   const displayRating = puja.rating > 0 ? puja.rating : temple.rating > 0 ? temple.rating : 4.5;
   const displayReviews = puja.reviewCount > 0 ? puja.reviewCount : temple.reviewCount > 0 ? temple.reviewCount : 120;
 
+  // Active booking check
+  const session = await auth();
+  let hasActiveBooking = false;
+  let activeBookingId = "";
+
+  if (session?.user) {
+    await connectDB();
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    const activeBooking = await Booking.findOne({
+      user: session.user.id,
+      service: params.id,
+      paymentStatus: "paid",
+      date: { $gte: today }
+    })
+      .select("_id")
+      .lean();
+
+    if (activeBooking) {
+      hasActiveBooking = true;
+      activeBookingId = (activeBooking as any)._id.toString();
+    }
+  }
+
   return (
     <PublicPage>
       <PujaDetailClient
@@ -96,6 +123,8 @@ export default async function PujaDetailPage({ params }: { params: { id: string 
         faqs={faqs}
         displayRating={displayRating}
         displayReviews={displayReviews}
+        hasActiveBooking={hasActiveBooking}
+        activeBookingId={activeBookingId}
       />
     </PublicPage>
   );

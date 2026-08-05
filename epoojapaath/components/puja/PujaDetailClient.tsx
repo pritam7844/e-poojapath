@@ -51,6 +51,8 @@ interface Props {
   faqs: { question: string; answer: string }[];
   displayRating: number;
   displayReviews: number;
+  hasActiveBooking?: boolean;
+  activeBookingId?: string;
 }
 
 type BookingStep = "package" | "details";
@@ -93,6 +95,8 @@ export function PujaDetailClient({
   faqs,
   displayRating,
   displayReviews,
+  hasActiveBooking = false,
+  activeBookingId = "",
 }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -773,12 +777,21 @@ export function PujaDetailClient({
               </div>
             )}
             
-            <button
-              onClick={() => { setBookingStep("details"); setShowMobileSidebar(true); }}
-              className="btn-saffron w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2 shadow-md shadow-saffron/20 mt-3"
-            >
-              Book Now at {formatCurrency(grandTotal)} 🪔
-            </button>
+            {hasActiveBooking ? (
+              <Link
+                href={`/user/bookings/${activeBookingId}`}
+                className="btn-saffron w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2 shadow-md shadow-saffron/20 mt-3"
+              >
+                Already Booked 🪔 (Click to View)
+              </Link>
+            ) : (
+              <button
+                onClick={() => { setBookingStep("details"); setShowMobileSidebar(true); }}
+                className="btn-saffron w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2 shadow-md shadow-saffron/20 mt-3"
+              >
+                Book Now at {formatCurrency(grandTotal)} 🪔
+              </button>
+            )}
 
             {/* Trusted subtext */}
             <p className="text-center text-xs text-muted-foreground mt-2.5 font-medium flex items-center justify-center gap-1">
@@ -1093,9 +1106,29 @@ export function PujaDetailClient({
               md:block md:sticky md:top-24 md:p-0 md:bg-transparent md:z-auto
             `}>
 
-              {/* ── Package Step ── */}
-              {bookingStep === "package" && (
-                <div className="card-devotional">
+                {hasActiveBooking ? (
+                  <div className="card-devotional text-center p-6 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-saffron/10 flex items-center justify-center text-saffron text-3xl mx-auto animate-pulse">
+                      🪔
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-lg text-foreground font-semibold">Already Booked!</h3>
+                      <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                        You have an active booking for this Puja. Your name and gotra are registered.
+                      </p>
+                    </div>
+                    <Link
+                      href={`/user/bookings/${activeBookingId}`}
+                      className="btn-saffron w-full py-3.5 text-sm font-semibold flex items-center justify-center gap-2 shadow-md shadow-saffron/20 mt-2"
+                    >
+                      View Booking Details
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    {/* ── Package Step ── */}
+                    {bookingStep === "package" && (
+                      <div className="card-devotional">
                   <div className="text-center mb-4">
                     <h3 className="font-heading text-lg text-foreground mb-1">Book This Puja</h3>
                     <p className="text-xs text-saffron font-semibold mb-1 flex items-center justify-center gap-1">
@@ -1382,7 +1415,9 @@ export function PujaDetailClient({
                   </button>
                 </form>
               )}
-            </div>
+            </>
+          )}
+        </div>
           </div>
         </div>
       </div>
@@ -1399,12 +1434,21 @@ export function PujaDetailClient({
             }
           `}} />
           <div className="md:hidden fixed bottom-4 right-[144px] z-50 animate-in fade-in duration-300">
-            <button
-              onClick={() => { setBookingStep("details"); setShowMobileSidebar(true); }}
-              className="bg-[#E65100] text-white font-bold text-xs px-5 py-3 rounded-full flex items-center gap-1.5 shadow-lg border border-white/20 whitespace-nowrap"
-            >
-              <span>Book Now at {formatCurrency(grandTotal)} 🪔</span>
-            </button>
+            {hasActiveBooking ? (
+              <Link
+                href={`/user/bookings/${activeBookingId}`}
+                className="bg-[#E65100] text-white font-bold text-xs px-5 py-3 rounded-full flex items-center gap-1.5 shadow-lg border border-white/20 whitespace-nowrap text-center"
+              >
+                <span>Already Booked 🪔</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => { setBookingStep("details"); setShowMobileSidebar(true); }}
+                className="bg-[#E65100] text-white font-bold text-xs px-5 py-3 rounded-full flex items-center gap-1.5 shadow-lg border border-white/20 whitespace-nowrap"
+              >
+                <span>Book Now at {formatCurrency(grandTotal)} 🪔</span>
+              </button>
+            )}
           </div>
         </>
       )}
