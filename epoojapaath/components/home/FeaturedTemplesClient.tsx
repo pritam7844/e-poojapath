@@ -34,12 +34,12 @@ export function FeaturedTemplesClient({ temples }: { temples: TempleItem[] }) {
             <p className="font-heading text-lg">{t("No temples featured yet", "अभी तक कोई मंदिर सूचीबद्ध नहीं है")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+          <div className="flex overflow-x-auto gap-3 pb-3 -mx-4 px-4 scrollbar-none snap-x snap-mandatory md:grid md:grid-cols-4 md:gap-5 md:pb-0 md:mx-0 md:px-0">
             {temples.map((temple) => (
               <Link
                 href={`/temples/${temple.slug}`}
                 key={temple._id}
-                className="flex flex-col group"
+                className="flex flex-col group w-[160px] shrink-0 snap-align-start md:w-auto"
               >
                 <div className="relative h-28 md:h-40 w-full rounded-2xl overflow-hidden mb-2 shadow-sm">
                   <Image

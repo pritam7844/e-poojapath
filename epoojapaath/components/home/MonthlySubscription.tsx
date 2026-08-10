@@ -41,56 +41,56 @@ export function MonthlySubscription({ subscription }: MonthlySubscriptionProps) 
         {/* Ambient light glow in the background */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
  
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 p-8 md:p-12">
+        <div className="flex flex-row items-stretch justify-between gap-4 p-4 min-[360px]:p-5 md:grid md:grid-cols-2 md:items-center md:gap-8 md:p-12">
           {/* Left Column - Details */}
-          <div className="flex flex-col space-y-6 md:space-y-8 z-10">
+          <div className="flex flex-col justify-center gap-2 md:gap-8 w-[60%] md:w-auto shrink-0 z-10">
             {/* Badge */}
-            <div className="inline-flex items-center gap-1.5 self-start bg-white/10 border border-white/20 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-orange-200">
-              <Sparkles size={14} className="text-orange-200" />
+            <div className="inline-flex items-center gap-1.5 self-start bg-white/10 border border-white/20 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[8px] min-[360px]:text-[9px] md:text-xs font-semibold uppercase tracking-wider text-orange-200">
+              <Sparkles className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 text-orange-200" />
               <span>{t("Subscription", "सब्सक्रिप्शन")}</span>
             </div>
  
-            <div className="space-y-3">
-              <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-orange-100 leading-tight">
+            <div className="space-y-1 md:space-y-3">
+              <h2 className="text-sm min-[360px]:text-base sm:text-lg md:text-4xl font-heading font-extrabold text-orange-100 leading-tight">
                 {title}
               </h2>
-              <p className="text-orange-200/80 text-base md:text-lg font-medium line-clamp-2">
+              <p className="text-orange-200/80 text-[9px] min-[360px]:text-xs md:text-lg font-medium line-clamp-2">
                 {desc}
               </p>
             </div>
  
             {/* Price Badge */}
-            <div className="text-2xl md:text-3xl font-bold flex items-baseline gap-2">
-              <span className="text-orange-300 text-sm font-semibold">{t("Starting from", "शुरुआत")}</span>
-              <span className="text-white text-3xl md:text-4xl">₹{price}</span>
-              <span className="text-white/60 text-sm font-medium">/ {t("month", "महीना")}</span>
+            <div className="text-xs min-[360px]:text-sm sm:text-base md:text-3xl font-bold flex items-baseline gap-1 md:gap-2">
+              <span className="text-orange-300 text-[8px] min-[360px]:text-[10px] font-semibold">{t("Starting from", "शुरुआत")}</span>
+              <span className="text-white text-sm min-[360px]:text-base md:text-4xl">₹{price}</span>
+              <span className="text-white/60 text-[8px] min-[360px]:text-[10px] font-medium">/ {t("month", "महीना")}</span>
             </div>
  
             {/* Actions Row */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-2 pt-1 md:pt-2">
+              {/* Mobile and Desktop Explore button */}
               <Link
                 href={exploreUrl}
-                className="inline-flex items-center justify-between bg-white text-[#4A1030] font-bold px-6 py-3 rounded-full hover:bg-orange-50 transition-all duration-300 group shadow-lg active:scale-95"
+                className="bg-white text-[#4A1030] text-[9px] min-[360px]:text-[10px] md:text-sm font-bold px-3 py-1.5 md:px-6 md:py-3 rounded-full hover:bg-orange-50 transition-all duration-300 flex items-center justify-between shadow-md active:scale-95 w-fit"
               >
                 <span>{t("Explore Plans", "प्लान्स देखें")}</span>
-                <div className="ml-4 w-6 h-6 rounded-full bg-[#4D1030] flex items-center justify-center text-white group-hover:translate-x-1 transition-transform">
-                  <ArrowRight size={14} />
-                </div>
+                <ArrowRight className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 ml-1.5 md:ml-4" />
               </Link>
  
-              <div className="flex items-center gap-2 bg-white/10 px-4 py-3 rounded-full border border-white/10 text-orange-200 text-sm font-semibold shadow-inner">
-                <Calendar size={16} className="text-orange-200" />
-                <span>{t("Daily Puja Benefits", "दैनिक पूजा के लाभ")}</span>
+              <div className="hidden min-[380px]:flex md:flex items-center gap-1.5 bg-white/10 px-2 py-1.5 md:px-4 md:py-3 rounded-full border border-white/10 text-orange-200 text-[8px] md:text-sm font-semibold shadow-inner">
+                <Calendar className="w-2.5 h-2.5 md:w-4 md:h-4 text-orange-200" />
+                <span>{t("Daily Benefits", "दैनिक लाभ")}</span>
               </div>
             </div>
           </div>
  
           {/* Right Column - Image */}
-          <div className="relative w-full h-[280px] md:h-[380px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="relative w-[40%] md:w-full h-[140px] sm:h-[160px] md:h-[380px] rounded-xl md:rounded-2xl overflow-hidden border border-white/10 shadow-2xl shrink-0">
             <Image
               src={image}
               alt="Subscription Deity"
               fill
+              sizes="(max-width: 768px) 40vw, 45vw"
               className="object-cover"
             />
             {/* Soft vignette overlay */}

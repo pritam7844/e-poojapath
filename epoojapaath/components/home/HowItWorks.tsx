@@ -56,26 +56,26 @@ export function HowItWorks() {
           <span className="text-[#D45B0A] text-3xl font-light select-none">]</span>
         </div>
  
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Steps Grid - Fixed 4-column row on mobile, Grid on desktop */}
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 lg:grid-cols-4 md:gap-8">
           {steps.map((step, idx) => {
             return (
               <div key={idx} className="flex flex-col items-center text-center relative">
                 {/* Icon Container with Floating Number Badge */}
-                <div className="relative w-20 h-20 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center mb-6 text-4xl select-none">
+                <div className="relative w-12 h-12 min-[360px]:w-14 min-[360px]:h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center mb-3 sm:mb-4 md:mb-6 text-xl min-[360px]:text-2xl md:text-4xl select-none">
                   {step.emoji}
                   
                   {/* Circular step number */}
-                  <div className="absolute -bottom-2 right-1/2 translate-x-1/2 w-6 h-6 rounded-full bg-[#E65100] text-white text-xs font-bold flex items-center justify-center border-2 border-white shadow">
+                  <div className="absolute -bottom-1.5 right-1/2 translate-x-1/2 w-4 h-4 min-[360px]:w-5 min-[360px]:h-5 md:w-6 md:h-6 rounded-full bg-[#E65100] text-white text-[8px] min-[360px]:text-[10px] md:text-xs font-bold flex items-center justify-center border border-white shadow">
                     {step.number}
                   </div>
                 </div>
- 
+  
                 {/* Step Info */}
-                <h3 className="text-base font-bold text-gray-800 mb-2">
+                <h3 className="text-[9px] min-[360px]:text-[10px] sm:text-xs md:text-base font-bold text-gray-800 mb-1 md:mb-2">
                   {step.title}
                 </h3>
-                <p className="text-xs text-gray-500 font-medium max-w-[200px] leading-relaxed">
+                <p className="text-[8px] min-[360px]:text-[9px] sm:text-xs text-gray-500 font-medium leading-tight max-w-[200px]">
                   {step.desc}
                 </p>
               </div>

@@ -41,21 +41,21 @@ export function WhyChoose() {
           {t("Why Choose ePoojapaath?", "ePoojapaath क्यों चुनें?")}
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-5 gap-1 min-[360px]:gap-1.5 md:gap-4">
           {reasons.map((item, idx) => {
             const IconComp = item.icon;
             return (
               <div
                 key={idx}
-                className="flex flex-col items-center text-center p-5 rounded-2xl bg-[#FFF9F2] border border-[#FBE9E7] shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="flex flex-col items-center text-center p-1 min-[360px]:p-2 md:p-5 rounded-lg min-[360px]:rounded-xl md:rounded-2xl bg-[#FFF9F2] border border-[#FBE9E7] shadow-sm hover:shadow-md transition-shadow duration-300"
               >
-                <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mb-4">
-                  <IconComp size={24} className="text-[#D45B0A]" />
+                <div className="w-7 h-7 min-[360px]:w-9 min-[360px]:h-9 md:w-12 md:h-12 rounded-full bg-orange-50 flex items-center justify-center mb-1.5 md:mb-4">
+                  <IconComp className="w-3.5 h-3.5 min-[360px]:w-4 min-[360px]:h-4 md:w-6 md:h-6 text-[#D45B0A]" />
                 </div>
-                <h3 className="text-sm font-bold text-gray-800 leading-tight">
+                <h3 className="text-[7.5px] min-[360px]:text-[9px] md:text-sm font-bold text-gray-800 leading-tight">
                   {item.title}
                 </h3>
-                <p className="text-xs text-gray-500 font-medium mt-1 leading-tight">
+                <p className="text-[6.5px] min-[360px]:text-[8px] md:text-xs text-gray-500 font-medium mt-0.5 md:mt-1 leading-tight">
                   {item.desc}
                 </p>
               </div>
