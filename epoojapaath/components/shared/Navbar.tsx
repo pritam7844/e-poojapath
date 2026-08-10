@@ -64,14 +64,13 @@ export function Navbar() {
     }`}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between h-16">
 
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 transition-transform hover:scale-105 duration-300">
           <Image
             src="/epoojalogo.png"
             alt="ePoojapaath"
-            width={56}
-            height={56}
-            className="object-contain h-14 md:h-16 w-auto"
+            width={80}
+            height={80}
+            className="object-contain h-20 md:h-24 w-auto"
             priority
           />
           <span className="font-heading text-xl md:text-2xl text-saffron leading-none">ePoojapaath</span>

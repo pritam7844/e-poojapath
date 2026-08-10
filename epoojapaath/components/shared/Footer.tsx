@@ -40,9 +40,9 @@ export function Footer() {
                 <Image
                   src="/epoojalogo.png"
                   alt="ePoojapaath"
-                  width={140}
-                  height={46}
-                  className="object-contain h-10 w-auto"
+                  width={200}
+                  height={66}
+                  className="object-contain h-16 w-auto"
                 />
               </div>
             </div>
