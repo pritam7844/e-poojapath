@@ -38,7 +38,7 @@ export default async function TemplesPage({ searchParams }: PageProps) {
       />
       <TempleFilters city={searchParams?.city} deity={searchParams?.deity} />
       <MandalaDivider />
-      <section className="section-padding max-w-7xl mx-auto">
+      <section className="pt-2 pb-6 md:pb-8 px-4 md:px-8 lg:px-16 max-w-7xl mx-auto">
         {dbError && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 font-mono text-sm whitespace-pre-wrap">
             <strong>Database Error:</strong> {dbError}

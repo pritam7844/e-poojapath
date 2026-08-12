@@ -7,7 +7,7 @@ interface TempleFiltersProps {
 
 export function TempleFilters({ city, deity }: TempleFiltersProps) {
   return (
-    <section className="py-5 bg-card-bg border-b border-deep-gold/20">
+    <section className="py-2 md:py-2.5 bg-card-bg border-b border-deep-gold/20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <form method="GET" className="flex flex-wrap gap-3">
           <input

@@ -55,7 +55,6 @@ export default async function ChadawaPage() {
         sanskrit="देवताओं को अर्पण"
         title="Chadawa Offerings"
         subtitle="Offer sacred items to your chosen deity — presented by temple pandits on your behalf. Book special chadawa independently."
-        className="pt-16 pb-10"
       />
       <MandalaDivider className="!py-1" />
 

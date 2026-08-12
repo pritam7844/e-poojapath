@@ -1,5 +1,5 @@
 import { getFeaturedBlogs } from "@/services/blog.service";
-import { BlogCard } from "@/components/blog/BlogCard";
+import { BlogPreviewClient } from "./BlogPreviewClient";
 import Link from "next/link";
 import { serialize } from "@/lib/utils";
 
@@ -16,9 +16,8 @@ export async function BlogPreview() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {blogs.map((blog: any) => <BlogCard key={blog._id.toString()} blog={blog} />)}
+      <div className="mb-10">
+        <BlogPreviewClient blogs={blogs} />
       </div>
 
       <div className="text-center">
