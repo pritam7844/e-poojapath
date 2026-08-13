@@ -21,6 +21,16 @@ import {
   Check,
   X,
   Clock,
+  Calendar,
+  FileText,
+  Home,
+  Camera,
+  Play,
+  Shield,
+  Heart,
+  TrendingUp,
+  XCircle,
+  Activity,
 } from "lucide-react";
 import { PujaCountdownTimer } from "./PujaCountdownTimer";
 import * as fpixel from "@/lib/fpixel";
@@ -58,10 +68,10 @@ interface Props {
 type BookingStep = "package" | "details";
 
 const HOW_IT_WORKS = [
-  { icon: "📿", title: "Choose Your Puja", description: "Select the package that suits your family size and devotion." },
-  { icon: "📅", title: "Select Date & Sankalp", description: "Enter your name, gotra and prayer intention for the ritual." },
-  { icon: "🛕", title: "Priest Performs at Temple", description: "Experienced pandits perform the ritual with full Vedic traditions." },
-  { icon: "📺", title: "Receive Photos & Videos + Prasad", description: "Watch the recording and receive prasad at your doorstep." },
+  { icon: Calendar, title: "Book Your Puja", description: "Choose package & select date" },
+  { icon: FileText, title: "Share Sankalp", description: "Enter name, gotra & prayer intention" },
+  { icon: Home, title: "Puja at Temple", description: "Our priests perform with Vedic rituals" },
+  { icon: Camera, title: "Receive Blessings", description: "Get video confirmation & prasad" },
 ];
 
 function formatDisplayDate(dateStr: string): string {
@@ -100,6 +110,7 @@ export function PujaDetailClient({
 }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
+  const [playVideo, setPlayVideo] = useState(false);
 
   // ── Sticky button state and observer ───────────────────────────────────────
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -915,21 +926,43 @@ export function PujaDetailClient({
           <div className="lg:col-span-2 space-y-10">
 
             {/* How It Works */}
-            <section>
-              <h2 className="font-heading text-2xl text-foreground mb-6">How it works?</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {HOW_IT_WORKS.map((step, i) => (
-                  <div key={i} className="card-devotional flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-full bg-saffron/10 flex items-center justify-center text-lg flex-shrink-0">{step.icon}</div>
-                    <div>
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <span className="w-4 h-4 rounded-full bg-saffron text-white text-[10px] font-bold flex items-center justify-center">{i + 1}</span>
-                        <h3 className="font-heading text-sm text-foreground">{step.title}</h3>
+            <section className="bg-white rounded-2xl p-6 border border-border/60">
+              <h2 className="font-heading text-lg md:text-xl font-bold text-foreground text-center mb-8">How It Works?</h2>
+              
+              <div className="flex flex-row items-start justify-between gap-1 sm:gap-4 relative">
+                {HOW_IT_WORKS.map((step, i) => {
+                  const IconComponent = step.icon;
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center text-center relative z-10 min-w-0">
+                      
+                      {/* Step Circle Container */}
+                      <div className="relative mb-3">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-[#5C3270] text-white flex items-center justify-center shadow-md">
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                        </div>
+                        {/* Step number label on bottom/inside */}
+                        <div className="absolute -bottom-1 right-1/2 translate-x-1/2 bg-white text-[#5C3270] border border-gray-200 text-[8px] sm:text-[9px] font-extrabold w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shadow-sm">
+                          {i + 1}
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground">{step.description}</p>
+
+                      {/* Title & Description */}
+                      <h3 className="font-heading text-[9px] sm:text-xs md:text-sm font-bold text-foreground mb-0.5 leading-tight">
+                        {step.title}
+                      </h3>
+                      <p className="text-[7.5px] sm:text-[10px] text-muted-foreground leading-snug max-w-[100px] sm:max-w-[140px] px-0.5">
+                        {step.description}
+                      </p>
+
+                      {/* Arrow Connector line between step circles */}
+                      {i < 3 && (
+                        <div className="absolute top-5 sm:top-6 left-[calc(50%+20px)] sm:left-[calc(50%+24px)] w-[calc(100%-40px)] sm:w-[calc(100%-48px)] h-[1px] bg-gray-200 z-0 flex items-center justify-center">
+                          <span className="text-gray-300 text-[8px] sm:text-[10px] translate-x-0.5">➔</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
@@ -1004,6 +1037,77 @@ export function PujaDetailClient({
                 {renderChadawaSection(false)}
               </div>
             )}
+
+            {/* Why Perform Puja & Video Section */}
+            <section className="bg-[#2E1A3D] text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+              <div className="absolute -right-16 -top-16 w-36 h-36 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+              <div className="absolute -left-16 -bottom-16 w-36 h-36 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+              
+              <div className="grid grid-cols-12 gap-3 md:gap-6 items-center">
+                {/* Left benefits column */}
+                <div className="col-span-7 md:col-span-8">
+                  <h3 className="font-heading text-xs sm:text-base md:text-lg lg:text-xl font-bold text-amber-300 mb-3 md:mb-6 text-left">
+                    Why Perform {puja.name}?
+                  </h3>
+                  
+                  <div className="grid grid-cols-6 gap-1 md:gap-4">
+                    {[
+                      { icon: Shield, label: "Divine Protection" },
+                      { icon: Heart, label: "Peace & Harmony" },
+                      { icon: TrendingUp, label: "Prosperity & Success" },
+                      { icon: XCircle, label: "Removal of Obstacles" },
+                      { icon: Activity, label: "Health & Well-being" },
+                      { icon: Sparkles, label: "Spiritual Growth" },
+                    ].map((item, idx) => {
+                      const BenefitIcon = item.icon;
+                      return (
+                        <div key={idx} className="flex flex-col items-center text-center">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white/10 flex items-center justify-center text-amber-300 mb-1 shrink-0">
+                            <BenefitIcon className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                          </div>
+                          <span className="text-[6px] sm:text-[8px] md:text-[10px] font-semibold text-white/90 leading-tight">
+                            {item.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right video column */}
+                <div className="col-span-5 md:col-span-4 w-full">
+                  {playVideo ? (
+                    <div className="relative w-full aspect-video rounded-lg sm:rounded-2xl overflow-hidden shadow-lg bg-black">
+                      <iframe 
+                        src="https://www.youtube.com/embed/HfHkBEjofqk?autoplay=1" 
+                        title="Puja Video" 
+                        className="absolute inset-0 w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen 
+                      />
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={() => setPlayVideo(true)}
+                      className="relative w-full aspect-video rounded-lg sm:rounded-2xl overflow-hidden cursor-pointer group shadow-lg"
+                    >
+                      <Image 
+                        src={puja.image || (temple.images?.[0] ?? temple.coverImage)} 
+                        alt="Play Puja Video" 
+                        fill 
+                        className="object-cover transition-transform duration-300 group-hover:scale-105" 
+                        sizes="(max-width: 768px) 40vw, 30vw"
+                      />
+                      <div className="absolute inset-0 bg-black/45 flex items-center justify-center transition-colors group-hover:bg-black/55">
+                        <div className="w-6 h-6 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-amber-400 text-[#2E1A3D] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                          <Play className="w-3 h-3 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
 
             {/* Reviews */}
             <section>
