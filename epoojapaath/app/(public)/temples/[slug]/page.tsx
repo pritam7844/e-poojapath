@@ -10,10 +10,10 @@ import { connectDB } from "@/lib/db";
 import Puja from "@/models/Puja";
 import Chadawa from "@/models/Chadawa";
 import Review from "@/models/Review";
-import User from "@/models/User";
 import { formatCurrency, serialize } from "@/lib/utils";
 import { MapPin, Phone, Mail, Globe, Clock, Star, Instagram } from "lucide-react";
 import { TempleImageSlider } from "@/components/temple/TempleImageSlider";
+import { TempleReviewsSlider } from "@/components/temple/TempleReviewsSlider";
 
 export async function generateStaticParams() {
   const temples = await getApprovedTemples().catch(() => []);
@@ -48,17 +48,20 @@ export default async function TempleDetailPage({ params }: { params: { slug: str
     <PublicPage showAIChat>
       {/* Hero Slider */}
       <TempleImageSlider images={sliderImages}>
-        <div className="w-full pb-8 px-6 md:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div className="w-full pb-6 pt-24 px-6 md:px-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col md:flex-row md:items-end md:justify-between gap-4 z-10">
           <div>
-            <p className="font-sanskrit text-saffron mb-1">{temple.deity}</p>
-            <h1 className="font-heading text-4xl md:text-5xl text-white">{temple.name}</h1>
-            <div className="flex items-center gap-2 text-white/70 mt-2">
-              <MapPin size={16} className="text-saffron" />
-              <span>{temple.location.city}, {temple.location.state}</span>
+            <p className="font-sanskrit text-amber-300 font-bold tracking-wider text-xs md:text-sm drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.7)]">{temple.deity}</p>
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{temple.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-white/90 font-medium text-xs md:text-sm mt-2.5 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.7)]">
+              <span className="flex items-center gap-1">
+                <MapPin size={16} className="text-amber-400" />
+                <span>{temple.location.city}, {temple.location.state}</span>
+              </span>
               {temple.rating > 0 && (
-                <span className="flex items-center gap-1 ml-4">
-                  <Star size={14} className="text-saffron fill-saffron" />
-                  {temple.rating.toFixed(1)} ({temple.reviewCount} reviews)
+                <span className="flex items-center gap-1.5 bg-black/35 backdrop-blur-sm border border-white/10 rounded-full px-2.5 py-0.5 text-[11px] md:text-xs">
+                  <Star size={12} className="text-amber-400 fill-amber-400" />
+                  <span className="font-bold text-amber-300">{temple.rating.toFixed(1)}</span>
+                  <span className="text-white/70">({temple.reviewCount} reviews)</span>
                 </span>
               )}
             </div>
@@ -66,7 +69,7 @@ export default async function TempleDetailPage({ params }: { params: { slug: str
           <div className="shrink-0">
             <Link
               href={pujas.length > 0 ? "#pujas-section" : `/puja?temple=${temple.slug}`}
-              className="btn-saffron text-sm md:text-base py-2.5 px-6 shadow-lg inline-flex items-center gap-2 font-medium hover:scale-105 transition-all"
+              className="btn-saffron text-sm md:text-base py-2.5 px-6 shadow-lg inline-flex items-center gap-2 font-semibold hover:scale-105 transition-all"
             >
               <span>Book a Puja 🪔</span>
             </Link>
@@ -163,26 +166,7 @@ export default async function TempleDetailPage({ params }: { params: { slug: str
                 {reviews.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No reviews yet. Be the first to review! 🙏</p>
                 ) : (
-                  <div className="space-y-4">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {reviews.map((r: any) => (
-                      <div key={r._id.toString()} className="card-devotional">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-8 h-8 rounded-full bg-saffron/10 flex items-center justify-center text-saffron font-bold text-sm">
-                            {(r.reviewerName?.[0] || r.booking?.devoteeName?.[0] || r.user?.name?.[0] || "D").toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground text-sm flex items-center gap-1.5">
-                              <span>{r.reviewerName || r.booking?.devoteeName || r.user?.name || "Devotee"}</span>
-                              {r.city && <span className="text-xs text-muted-foreground font-normal">({r.city})</span>}
-                            </p>
-                            <div className="flex gap-0.5">{"★".repeat(r.rating).split("").map((_: string, i: number) => <span key={i} className="text-saffron text-xs">★</span>)}</div>
-                          </div>
-                        </div>
-                        <p className="text-muted-foreground text-sm">{r.comment}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <TempleReviewsSlider reviews={reviews as any[]} />
                 )}
               </section>
             </div>

@@ -66,6 +66,7 @@ const EMPTY_PUJA = {
   name: "", nameHi: "", description: "", descriptionHi: "",
   price: "", duration: "", image: "", benefits: "", includes: "", scheduledAt: "",
   availableDates: [] as string[],
+  isActive: true,
 };
 const EMPTY_CHADAWA = {
   name: "", nameHi: "", description: "", descriptionHi: "",
@@ -289,6 +290,7 @@ export default function AdminTempleDetailPage() {
       includes: p.includes?.join(", ") || "",
       scheduledAt: "",
       availableDates: p.availableDates || [],
+      isActive: p.isActive !== false,
     });
     setPackages(p.packages?.length ? p.packages : DEFAULT_PACKAGES);
     setFaqs(p.faqs?.length ? p.faqs : [{ question: "", answer: "" }]);
@@ -689,6 +691,17 @@ export default function AdminTempleDetailPage() {
                 <Input label="Includes (comma separated)" value={pujaForm.includes} onChange={setPujaField("includes")} placeholder="Abhishek, Aarti, Prasad" />
                 <Textarea label="Description (English)" required value={pujaForm.description} onChange={setPujaField("description")} rows={3} className="md:col-span-2" />
                 <Textarea label="Description (Hindi)" required value={pujaForm.descriptionHi} onChange={setPujaField("descriptionHi")} rows={2} className="md:col-span-2" />
+                <div className="md:col-span-2">
+                  <Select
+                    label="Website Visibility"
+                    value={pujaForm.isActive ? "true" : "false"}
+                    onChange={e => setPujaForm(p => ({ ...p, isActive: e.target.value === "true" }))}
+                    options={[
+                      { value: "true", label: "Show on Website (Active) 🟢" },
+                      { value: "false", label: "Hide from Website (Hidden) 🔴" },
+                    ]}
+                  />
+                </div>
                 <div className="md:col-span-2 flex justify-end">
                   <Button type="button" size="sm" variant="outline" onClick={() => setPujaTab("packages")}>Next: Pricing Packages →</Button>
                 </div>
@@ -1020,7 +1033,11 @@ export default function AdminTempleDetailPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-medium text-foreground text-sm">{p.name}</p>
                     <span className="font-sanskrit text-saffron text-xs">{p.nameHi}</span>
-                    {!p.isActive && <Badge variant="rejected">Inactive</Badge>}
+                    {p.isActive !== false ? (
+                      <Badge variant="approved">Visible 🟢</Badge>
+                    ) : (
+                      <Badge variant="rejected">Hidden 🔴</Badge>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
                     <Clock size={11} /> {p.duration}

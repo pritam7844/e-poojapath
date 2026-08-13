@@ -111,6 +111,21 @@ export function PujaDetailClient({
   const { data: session } = useSession();
   const router = useRouter();
   const [playVideo, setPlayVideo] = useState(false);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  const reviewsList = [
+    { name: "Priya S.", comment: "An incredibly spiritual experience. The pandit performed every ritual with deep devotion. I could feel the divine presence during the entire puja.", stars: 5 },
+    { name: "Rajesh K.", comment: "Very authentic puja conducted at the actual temple. Received a beautiful video and prasad delivery was prompt. Highly recommend!", stars: 5 },
+    { name: "Anita M.", comment: "Booked for my family of 4. The whole family felt blessed watching the live puja. Will definitely book again for next occasion.", stars: 4 },
+    { name: "Suresh P.", comment: "The sankalp was taken with our full names and gotra. Everything felt genuine and sacred. Thank you for this divine service.", stars: 5 },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentReviewIndex((prev) => (prev + 1) % reviewsList.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [reviewsList.length]);
 
   // ── Sticky button state and observer ───────────────────────────────────────
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -1121,23 +1136,41 @@ export function PujaDetailClient({
                   {displayRating} Stories of Blessed Experiences
                 </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { name: "Priya S.", comment: "An incredibly spiritual experience. The pandit performed every ritual with deep devotion. I could feel the divine presence during the entire puja.", stars: 5 },
-                  { name: "Rajesh K.", comment: "Very authentic puja conducted at the actual temple. Received a beautiful video and prasad delivery was prompt. Highly recommend!", stars: 5 },
-                  { name: "Anita M.", comment: "Booked for my family of 4. The whole family felt blessed watching the live puja. Will definitely book again for next occasion.", stars: 4 },
-                  { name: "Suresh P.", comment: "The sankalp was taken with our full names and gotra. Everything felt genuine and sacred. Thank you for this divine service.", stars: 5 },
-                ].map((review, i) => (
-                  <div key={i} className="card-devotional">
-                    <div className="flex items-center gap-1 mb-2">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
-                      ))}
+              <div className="relative overflow-hidden w-full">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
+                >
+                  {reviewsList.map((review, i) => (
+                    <div key={i} className="w-full shrink-0 px-1 select-none">
+                      <div className="card-devotional w-full min-h-[140px] flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center gap-1 mb-2">
+                            {Array.from({ length: 5 }).map((_, j) => (
+                              <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
+                            ))}
+                          </div>
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
+                        </div>
+                        <p className="text-xs font-semibold text-foreground">— {review.name}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
-                    <p className="text-xs font-semibold text-foreground">— {review.name}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                
+                {/* Dots indicators */}
+                <div className="flex justify-center gap-2 mt-4">
+                  {reviewsList.map((_, i) => (
+                    <button 
+                      key={i}
+                      onClick={() => setCurrentReviewIndex(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        i === currentReviewIndex ? 'bg-saffron w-6' : 'bg-muted/65 hover:bg-muted'
+                      }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
             </section>
 
