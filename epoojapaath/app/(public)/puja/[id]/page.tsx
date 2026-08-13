@@ -48,9 +48,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-async function getTempleChadawa(templeId: string): Promise<ChadawaItem[]> {
+async function getTempleChadawa(templeId: string, allowedChadawaIds?: string[]): Promise<ChadawaItem[]> {
   await connectDB();
-  const items = await Chadawa.find({ temple: templeId, isActive: true, isSpecial: false }).limit(12).lean();
+  const query: any = { temple: templeId, isActive: true, isSpecial: false };
+  if (allowedChadawaIds && allowedChadawaIds.length > 0) {
+    query._id = { $in: allowedChadawaIds };
+  }
+  const items = await Chadawa.find(query).limit(12).lean();
   return items as unknown as ChadawaItem[];
 }
 
@@ -83,7 +87,7 @@ export default async function PujaDetailPage({ params }: { params: { id: string 
   const puja = serialize(pujaRaw);
 
   const temple = puja.temple;
-  const chadawaItems = serialize(await getTempleChadawa(temple._id).catch(() => []));
+  const chadawaItems = serialize(await getTempleChadawa(temple._id, puja.chadawas).catch(() => []));
   const faqs = puja.faqs && puja.faqs.length > 0 ? puja.faqs : DEFAULT_FAQS;
 
   const displayRating = puja.rating > 0 ? puja.rating : temple.rating > 0 ? temple.rating : 4.5;

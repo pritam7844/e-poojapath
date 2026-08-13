@@ -39,6 +39,7 @@ type Puja = {
   packages?: IPujaPackage[];
   faqs?: IPujaFaq[];
   availableDates?: string[];
+  chadawas?: any[];
 };
 type Chadawa = {
   _id: string; name: string; nameHi: string; description: string;
@@ -67,6 +68,7 @@ const EMPTY_PUJA = {
   price: "", duration: "", image: "", benefits: "", includes: "", scheduledAt: "",
   availableDates: [] as string[],
   isActive: true,
+  chadawas: [] as string[],
 };
 const EMPTY_CHADAWA = {
   name: "", nameHi: "", description: "", descriptionHi: "",
@@ -200,7 +202,7 @@ export default function AdminTempleDetailPage() {
   const [pujaForm, setPujaForm] = useState(EMPTY_PUJA);
   const [packages, setPackages] = useState<IPujaPackage[]>(DEFAULT_PACKAGES);
   const [faqs, setFaqs] = useState<IPujaFaq[]>([{ question: "", answer: "" }]);
-  const [pujaTab, setPujaTab] = useState<"basic" | "packages" | "faqs">("basic");
+  const [pujaTab, setPujaTab] = useState<"basic" | "packages" | "faqs" | "chadawas">("basic");
   const [pujaDateMode, setPujaDateMode] = useState<"any" | "specific">("any");
   const [pujaNewDateInput, setPujaNewDateInput] = useState("");
 
@@ -291,6 +293,7 @@ export default function AdminTempleDetailPage() {
       scheduledAt: "",
       availableDates: p.availableDates || [],
       isActive: p.isActive !== false,
+      chadawas: p.chadawas?.map((c: any) => typeof c === "object" ? c._id.toString() : c.toString()) || [],
     });
     setPackages(p.packages?.length ? p.packages : DEFAULT_PACKAGES);
     setFaqs(p.faqs?.length ? p.faqs : [{ question: "", answer: "" }]);
@@ -440,7 +443,12 @@ export default function AdminTempleDetailPage() {
   if (!data) return <div className="p-8 text-muted-foreground">Temple not found.</div>;
 
   const { temple, pujas, chadawas, bookings, revenue } = data;
-  const pujaTabItems = [{ key: "basic", label: "Basic Info" }, { key: "packages", label: "Pricing Packages" }, { key: "faqs", label: "FAQs" }] as const;
+  const pujaTabItems = [
+    { key: "basic", label: "Basic Info" },
+    { key: "packages", label: "Pricing Packages" },
+    { key: "faqs", label: "FAQs" },
+    { key: "chadawas", label: "Select Chadawas" }
+  ] as const;
 
   return (
     <div className="min-h-screen bg-background">
@@ -755,6 +763,56 @@ export default function AdminTempleDetailPage() {
                 </button>
                 <div className="flex justify-between pt-2">
                   <Button type="button" size="sm" variant="outline" onClick={() => setPujaTab("packages")}>← Back</Button>
+                  <Button type="button" size="sm" variant="outline" onClick={() => setPujaTab("chadawas")}>Next: Select Chadawas →</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Chadawas Selection Tab */}
+            {pujaTab === "chadawas" && (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">Select specific Chadawa offerings of this temple to show on this Puja&apos;s page. (If none selected, all active regular Chadawas will be shown)</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-1 border border-border rounded-xl bg-card">
+                  {chadawas
+                    .filter((c: any) => c.isActive && !c.isSpecial)
+                    .map((c: any) => {
+                      const isChecked = pujaForm.chadawas?.includes(c._id.toString());
+                      return (
+                        <label key={c._id} className="flex items-center gap-3 p-3 rounded-xl border border-border/60 hover:bg-muted/40 transition cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {
+                              const currentSelected = pujaForm.chadawas || [];
+                              const updated = currentSelected.includes(c._id.toString())
+                                ? currentSelected.filter((id) => id !== c._id.toString())
+                                : [...currentSelected, c._id.toString()];
+                              setPujaForm((prev) => ({ ...prev, chadawas: updated }));
+                            }}
+                            className="rounded border-border text-saffron focus:ring-saffron"
+                          />
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            {c.image && (
+                              <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0">
+                                <Image src={c.image} alt={c.name} fill className="object-cover" />
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              <p className="font-medium text-foreground text-sm truncate">{c.name}</p>
+                              <p className="text-xs text-saffron font-medium">{formatCurrency(c.price)}</p>
+                            </div>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  {chadawas.filter((c: any) => c.isActive && !c.isSpecial).length === 0 && (
+                    <p className="text-sm text-muted-foreground italic p-4 col-span-2 text-center">No active regular Chadawa offerings found in this temple.</p>
+                  )}
+                </div>
+
+                <div className="flex justify-between pt-2">
+                  <Button type="button" size="sm" variant="outline" onClick={() => setPujaTab("faqs")}>← Back</Button>
                   <Button type="submit" loading={saving} size="sm">
                     {editPujaData ? "Puja Update Karo 🙏" : "Puja Add Karo 🙏"}
                   </Button>
