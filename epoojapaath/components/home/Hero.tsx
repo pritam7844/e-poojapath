@@ -716,9 +716,9 @@ export function Hero() {
   }, []);
 
   const statsList = [
-    { val: `${statsData.temples}`, en: "Temples", hi: "मंदिर" },
-    { val: `${statsData.bookings}`, en: "Bookings", hi: "बुकिंग" },
-    { val: `${statsData.cities}`, en: "Cities", hi: "शहर" },
+    { val: `${statsData.temples > 0 ? statsData.temples : 500}+`, en: "Temples", hi: "मंदिर" },
+    { val: `${statsData.bookings > 0 ? statsData.bookings + 500 : 500}+`, en: "Bookings", hi: "बुकिंग" },
+    { val: `${statsData.cities > 0 ? statsData.cities : 50}+`, en: "Cities", hi: "शहर" },
   ];
 
   const slide = slides[current];

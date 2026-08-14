@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import {
   Star, MapPin, CheckCircle2, ChevronDown, Flower2,
   BookOpen, Sparkles, Plus, Minus, ShoppingBasket, Check,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { PublicPage } from "@/components/shared/PublicPage";
 import { Input, Textarea, Select } from "@/components/ui/Input";
@@ -111,6 +112,21 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
   // States to hold other special offerings from the same temple
   const [templeSpecialChadawas, setTempleSpecialChadawas] = useState<ChadawaData[]>([]);
   const [selectedOthers, setSelectedOthers] = useState<Record<string, boolean>>({});
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  const reviewsList = [
+    { name: "Kavita R.", comment: "Offering the chadawa at this temple felt truly divine. The prasad delivery was prompt and beautifully packed.", stars: 5 },
+    { name: "Mohan D.", comment: "The pandit chanted with full devotion. Received a detailed video of the entire offering. Very satisfied!", stars: 5 },
+    { name: "Sunita P.", comment: "I could select individual items — loved the flexibility! My mother was moved watching the ritual video.", stars: 4 },
+    { name: "Arjun K.", comment: "Simple to book, authentic ritual. The deity felt genuinely pleased with the offering.", stars: 5 },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentReviewIndex((prev) => (prev + 1) % reviewsList.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [reviewsList.length]);
 
   useEffect(() => {
     fetch(`/api/chadawa/${params.id}`)
@@ -596,16 +612,16 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
 
             {/* ── How It Works ── */}
             <section>
-              <h2 className="font-heading text-2xl text-foreground mb-6">How Chadawa Booking Works?</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <h2 className="font-heading text-lg sm:text-2xl text-foreground mb-3 sm:mb-6">How Chadawa Booking Works?</h2>
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-4">
                 {HOW_IT_WORKS.map((step, i) => (
-                  <div key={i} className="card-devotional text-center">
-                    <div className="text-3xl mb-3">{step.icon}</div>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <span className="w-5 h-5 rounded-full bg-lotus-pink/20 text-lotus-pink text-xs font-bold flex items-center justify-center">{i + 1}</span>
-                      <h3 className="font-heading text-base text-foreground">{step.title}</h3>
+                  <div key={i} className="card-devotional text-center p-2 sm:p-4 flex flex-col items-center justify-start">
+                    <div className="text-xl sm:text-3xl mb-1.5">{step.icon}</div>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                      <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-lotus-pink/20 text-lotus-pink text-[10px] sm:text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                      <h3 className="font-heading text-[11px] sm:text-base text-foreground leading-tight">{step.title}</h3>
                     </div>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground leading-tight sm:leading-relaxed">{step.description}</p>
                   </div>
                 ))}
               </div>
@@ -660,24 +676,65 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
                     <Star key={i} size={18} className={i < Math.round(displayRating) ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
                   ))}
                 </div>
-                <h2 className="font-heading text-2xl text-foreground">{displayRating} Stories of Blessed Experiences</h2>
+                <h2 className="font-heading text-xl sm:text-2xl text-foreground">
+                  {displayRating.toFixed(1)} Stories of Blessed Experiences
+                </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { name: "Kavita R.", comment: "Offering the chadawa at this temple felt truly divine. The prasad delivery was prompt and beautifully packed.", stars: 5 },
-                  { name: "Mohan D.", comment: "The pandit chanted with full devotion. Received a detailed video of the entire offering. Very satisfied!", stars: 5 },
-                  { name: "Sunita P.", comment: "I could select individual items — loved the flexibility! My mother was moved watching the ritual video.", stars: 4 },
-                  { name: "Arjun K.", comment: "Simple to book, authentic ritual. The deity felt genuinely pleased with the offering.", stars: 5 },
-                ].map((review, i) => (
-                  <div key={i} className="card-devotional">
-                    <div className="flex items-center gap-1 mb-2">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
-                    <p className="text-xs font-semibold text-foreground">— {review.name}</p>
+
+              <div className="relative w-full">
+                {/* Left navigation arrow */}
+                <button
+                  onClick={() => setCurrentReviewIndex((prev) => (prev <= 0 ? reviewsList.length - 1 : prev - 1))}
+                  className="absolute -left-2.5 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white border border-border/80 text-foreground shadow-md flex items-center justify-center hover:bg-saffron hover:text-white transition"
+                  aria-label="Previous review"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                {/* Right navigation arrow */}
+                <button
+                  onClick={() => setCurrentReviewIndex((prev) => (prev >= reviewsList.length - 1 ? 0 : prev + 1))}
+                  className="absolute -right-2.5 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white border border-border/80 text-foreground shadow-md flex items-center justify-center hover:bg-saffron hover:text-white transition"
+                  aria-label="Next review"
+                >
+                  <ChevronRight size={16} />
+                </button>
+
+                <div className="overflow-hidden w-full rounded-2xl">
+                  <div 
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
+                  >
+                    {reviewsList.map((review, i) => (
+                      <div key={i} className="w-full shrink-0 select-none">
+                        <div className="card-devotional w-full min-h-[140px] flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center gap-1 mb-2">
+                              {Array.from({ length: 5 }).map((_, j) => (
+                                <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
+                              ))}
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
+                          </div>
+                          <p className="text-xs font-semibold text-foreground">— {review.name}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                </div>
+              </div>
+                
+              {/* Dots indicators */}
+              <div className="flex justify-center gap-2 mt-4">
+                {reviewsList.map((_, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => setCurrentReviewIndex(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      i === currentReviewIndex ? 'bg-saffron w-6' : 'bg-muted/65 hover:bg-muted'
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
                 ))}
               </div>
             </section>

@@ -14,6 +14,7 @@ import { formatCurrency, serialize } from "@/lib/utils";
 import { MapPin, Phone, Mail, Globe, Clock, Star, Instagram } from "lucide-react";
 import { TempleImageSlider } from "@/components/temple/TempleImageSlider";
 import { TempleReviewsSlider } from "@/components/temple/TempleReviewsSlider";
+import { TempleChadawaSection } from "@/components/temple/TempleChadawaSection";
 
 export async function generateStaticParams() {
   const temples = await getApprovedTemples().catch(() => []);
@@ -120,16 +121,25 @@ export default async function TempleDetailPage({ params }: { params: { slug: str
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {pujas.map((puja: any) => (
-                      <div key={puja._id.toString()} className="card-devotional">
-                        <div className="text-xs text-saffron font-semibold mb-1 flex items-center gap-1">
-                          🛕 {temple.name}
-                        </div>
-                        <h3 className="font-heading text-lg text-foreground">{puja.name}</h3>
-                        <p className="font-sanskrit text-saffron text-sm mb-2">{puja.nameHi}</p>
-                        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{puja.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="font-heading text-xl text-saffron">{formatCurrency(puja.price)}</span>
-                          <Link href={`/temples/${temple.slug}/puja/${puja._id}`} className="btn-saffron text-sm py-1.5 px-4">Book 🪔</Link>
+                      <div key={puja._id.toString()} className="card-devotional flex gap-4 items-start">
+                        {puja.image && (
+                          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-muted">
+                            <Image src={puja.image} alt={puja.name} fill className="object-cover" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
+                          <div>
+                            <div className="text-xs text-saffron font-semibold mb-1 flex items-center gap-1">
+                              🛕 {temple.name}
+                            </div>
+                            <h3 className="font-heading text-base sm:text-lg text-foreground line-clamp-1">{puja.name}</h3>
+                            {puja.nameHi && <p className="font-sanskrit text-saffron text-xs mb-1.5">{puja.nameHi}</p>}
+                            <p className="text-muted-foreground text-xs sm:text-sm mb-3 line-clamp-2">{puja.description}</p>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto pt-1">
+                            <span className="font-heading text-lg sm:text-xl text-saffron">{formatCurrency(puja.price)}</span>
+                            <Link href={`/temples/${temple.slug}/puja/${puja._id}`} className="btn-saffron text-xs sm:text-sm py-1.5 px-4">Book 🪔</Link>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -138,27 +148,7 @@ export default async function TempleDetailPage({ params }: { params: { slug: str
               )}
 
               {/* Chadawa */}
-              {chadawaItems.length > 0 && (
-                <section>
-                  <h2 className="font-heading text-2xl text-foreground mb-6">Chadawa Offerings</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {chadawaItems.map((item: any) => (
-                      <div key={item._id.toString()} className="card-devotional">
-                        <div className="text-xs text-saffron font-semibold mb-1 flex items-center gap-1">
-                          🛕 {temple.name}
-                        </div>
-                        <h3 className="font-heading text-lg text-foreground">{item.name}</h3>
-                        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{item.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="font-heading text-xl text-saffron">{formatCurrency(item.price)}</span>
-                          <Link href={`/chadawa/${item._id}`} className="btn-outline-gold text-sm py-1.5 px-4">Offer 🌸</Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
+              <TempleChadawaSection chadawaItems={chadawaItems as any[]} templeName={temple.name} />
 
               {/* Reviews */}
               <section>

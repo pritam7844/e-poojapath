@@ -204,8 +204,8 @@ At the Tripuresh Bhairav Temple, the deity is offered Bilva Leaves, Flowers & Ga
   const COMMON_FAQS = [
     { question: "Why choose us for online Puja booking?", answer: "We are a trusted Sanatan spiritual platform enabling devotees to book pujas at ancient temples across India. Our experienced pandits perform every puja in Shubh Muhurat with full Vedic rituals." },
     { question: "Will I receive a recording of the Puja?", answer: "Yes! After the puja, a recorded video is provided. Post-puja, bhaktibox and aarti-prasad are delivered to the devotee's doorstep." },
-    { question: "What should I do if I don't know my Gotra?", answer: "You can mention 'Kashyap Gotra' as the universal gotra, or simply leave it blank — the pandit will use the common lineage." },
-    { question: "Is online puja equally powerful as in-person puja?", answer: "Absolutely. The Vedic tradition recognises Sankalp (intention) as the key — physical presence is not mandatory." },
+    { question: "What should I do if I don't know my Gotra?", answer: "If you know your Gotra, please provide it during booking. If you don't know your Gotra, you can leave the field blank. Our priest will guide you according to the customary Sankalp practice." },
+    { question: "Can I book the puja if I cannot personally visit the temple?", answer: "Yes. ePoojapaath enables devotees to submit their Sankalp remotely while the puja is performed at the temple by the participating priest." },
   ];
 
   // Pujas

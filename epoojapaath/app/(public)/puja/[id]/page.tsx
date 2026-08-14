@@ -69,15 +69,15 @@ const DEFAULT_FAQS = [
   },
   {
     question: "What should I do if I don't know my Gotra?",
-    answer: "You can mention 'Kashyap Gotra' as the universal gotra, or simply leave it blank — the pandit will use the common lineage.",
+    answer: "If you know your Gotra, please provide it during booking. If you don't know your Gotra, you can leave the field blank. Our priest will guide you according to the customary Sankalp practice.",
   },
   {
     question: "What should I do on the day of the Puja?",
     answer: "Observe a simple fast, think of your deity, and watch the puja live if possible. Your presence in intention is what matters.",
   },
   {
-    question: "Is online puja equally powerful as in-person puja?",
-    answer: "Absolutely. The Vedic tradition recognises Sankalp (intention) as the key — physical presence is not mandatory. Our pandits perform with your name and gotra throughout.",
+    question: "Can I book the puja if I cannot personally visit the temple?",
+    answer: "Yes. ePoojapaath enables devotees to submit their Sankalp remotely while the puja is performed at the temple by the participating priest.",
   },
 ];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
@@ -20,7 +21,12 @@ import {
   Share2,
   Download,
   Home,
-  ArrowRight
+  ArrowRight,
+  Copy,
+  Check,
+  FileText,
+  Landmark,
+  Video
 } from "lucide-react";
 
 interface BookingDetailClientProps {
@@ -40,6 +46,8 @@ export function BookingDetailClient({
   userRole,
   userId
 }: BookingDetailClientProps) {
+
+  const [copied, setCopied] = useState(false);
 
   const backLink = userRole === "admin" ? "/admin/bookings" : "/user/bookings";
 
@@ -123,64 +131,158 @@ export function BookingDetailClient({
             )}
           </div>
 
-          {/* Premium 3-Column Metadata Card Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Booking ID */}
-            <div className="bg-card border border-border rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Booking ID</span>
-              <div className="flex items-center gap-1.5 mt-2">
-                <span className="font-mono text-base font-bold text-green-600 tracking-wide select-all">
-                  EP-{booking._id.toString().slice(-8).toUpperCase()}
+          {/* Unified Compact Booking Summary Card (Single Row Grid on Mobile & Desktop) */}
+          <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-sm">
+            {/* Top 3-Column Metadata Row */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 border-b border-emerald-200/60 pb-3 sm:pb-4 mb-3 sm:mb-4">
+              {/* Column 1: Booking ID */}
+              <div className="border-r border-emerald-200/60 pr-1.5 sm:pr-4">
+                <span className="text-[10px] sm:text-xs text-muted-foreground font-semibold uppercase tracking-wider block mb-1">
+                  Booking ID
                 </span>
-                <span className="w-4 h-4 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 text-[10px] font-bold">
-                  ✓
+                <div className="flex items-center gap-1">
+                  <span className="font-mono text-xs sm:text-sm md:text-base font-bold text-emerald-700 tracking-tight sm:tracking-wide select-all truncate">
+                    EP-{booking._id.toString().slice(-8).toUpperCase()}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        navigator.clipboard.writeText(`EP-${booking._id.toString().slice(-8).toUpperCase()}`);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }
+                    }}
+                    className="p-0.5 rounded hover:bg-emerald-100/60 text-emerald-700 transition shrink-0"
+                    title="Copy Booking ID"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Column 2: Puja Date */}
+              <div className="flex items-start gap-1.5 sm:gap-2.5 border-r border-emerald-200/60 pr-1.5 sm:pr-4">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-700 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <span className="text-[10px] sm:text-xs text-muted-foreground font-semibold uppercase tracking-wider block mb-0.5">
+                    Puja Date
+                  </span>
+                  <span className="font-heading text-xs sm:text-sm font-bold text-emerald-800 leading-tight block truncate">
+                    {formatDate(booking.date)}
+                  </span>
+                  {booking.serviceName && (
+                    <span className="text-[10px] sm:text-xs text-emerald-700/80 font-medium truncate block">
+                      {booking.serviceName}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Column 3: Total Paid */}
+              <div className="pl-1 sm:pl-2">
+                <span className="text-[10px] sm:text-xs text-muted-foreground font-semibold uppercase tracking-wider block mb-1">
+                  Total Paid
                 </span>
+                <div className="flex items-center gap-1">
+                  <span className="font-heading text-sm sm:text-lg md:text-xl font-bold text-emerald-700 leading-none">
+                    {formatCurrency(booking.amount)}
+                  </span>
+                  <span title="Inclusive of all taxes & offerings"><Info className="w-3.5 h-3.5 text-emerald-600/70 shrink-0 cursor-help" /></span>
+                </div>
               </div>
             </div>
 
-            {/* Puja Date */}
-            <div className="bg-card border border-border rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-saffron shrink-0" />
-                Puja Date
-              </span>
-              <div className="mt-2">
-                <span className="font-heading text-sm md:text-base text-foreground leading-tight block">
-                  {formatDate(booking.date)}
-                </span>
+            {/* Bottom Row: WhatsApp Alert & Share Button */}
+            <div className="flex flex-row items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-600/10 flex items-center justify-center text-emerald-600 shrink-0">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.967C16.59 2.016 14.11 1.001 12.008 1c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.47 3.387 1.357 4.847L2.46 21.052l4.187-1.898zm11.111-5.158c-.3-.15-1.774-.875-2.031-.969-.258-.094-.446-.14-.633.14-.187.281-.726.906-.89 1.094-.164.188-.328.21-.628.06-1.3-.65-2.292-1.144-3.238-2.766-.252-.43.252-.4.72-.943.08-.094.04-.176-.02-.326-.06-.15-.446-1.077-.611-1.477-.16-.39-.348-.337-.478-.344-.124-.007-.267-.008-.41-.008-.143 0-.377.054-.574.271-.197.216-.752.734-.752 1.79s.77 2.078.878 2.224c.108.146 1.516 2.315 3.673 3.247.513.222.913.355 1.225.454.515.163.984.14 1.354.085.412-.061 1.774-.726 2.022-1.428.249-.702.249-1.303.174-1.428-.075-.124-.26-.188-.56-.338z" />
+                  </svg>
+                </div>
+                <p className="text-[11px] sm:text-xs text-emerald-900 leading-tight truncate">
+                  You will receive updates on WhatsApp: <span className="font-semibold text-emerald-800">{booking.whatsappPhone || "Provided Number"}</span>
+                </p>
               </div>
-            </div>
-
-            {/* Total Paid */}
-            <div className="bg-card border border-border rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Total Paid</span>
-              <div className="mt-2">
-                <span className="font-heading text-base md:text-lg text-saffron font-bold leading-none block">
-                  {formatCurrency(booking.amount)}
-                </span>
-              </div>
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-1 sm:gap-1.5 bg-white hover:bg-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3.5 py-1.5 border border-emerald-300 rounded-lg transition shadow-sm shrink-0"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Share Booking</span>
+              </button>
             </div>
           </div>
 
-          {/* WhatsApp Alert and Share Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-green-500/5 border border-green-500/15 rounded-2xl p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 shrink-0">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.967C16.59 2.016 14.11 1.001 12.008 1c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.47 3.387 1.357 4.847L2.46 21.052l4.187-1.898zm11.111-5.158c-.3-.15-1.774-.875-2.031-.969-.258-.094-.446-.14-.633.14-.187.281-.726.906-.89 1.094-.164.188-.328.21-.628.06-1.3-.65-2.292-1.144-3.238-2.766-.252-.43.252-.4.72-.943.08-.094.04-.176-.02-.326-.06-.15-.446-1.077-.611-1.477-.16-.39-.348-.337-.478-.344-.124-.007-.267-.008-.41-.008-.143 0-.377.054-.574.271-.197.216-.752.734-.752 1.79s.77 2.078.878 2.224c.108.146 1.516 2.315 3.673 3.247.513.222.913.355 1.225.454.515.163.984.14 1.354.085.412-.061 1.774-.726 2.022-1.428.249-.702.249-1.303.174-1.428-.075-.124-.26-.188-.56-.338z" />
-                </svg>
-              </div>
-              <p className="text-xs text-green-800 leading-snug">
-                You will receive live photo and video updates on WhatsApp: <span className="font-semibold">{booking.whatsappPhone || "Provided Number"}</span>
-              </p>
+          {/* What Happens Next? Flowchart Section */}
+          <div className="bg-card border border-border rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-sm">
+            {/* Title with Flourish Lines */}
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+              <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-saffron/50" />
+              <h3 className="font-heading text-base sm:text-lg md:text-xl text-foreground font-bold text-center">
+                What Happens Next?
+              </h3>
+              <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-saffron/50" />
             </div>
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center gap-1.5 bg-white hover:bg-green-100 text-green-700 hover:text-green-800 text-xs font-semibold px-3.5 py-2 border border-green-200 rounded-full transition shadow-sm self-end sm:self-auto"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              Share Booking
-            </button>
+
+            {/* 4 Horizontal Steps */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 relative">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center text-center relative px-1">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron mb-2.5 shadow-sm shrink-0">
+                  <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-saffron" />
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-foreground mb-1">1. Booking Confirmed</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
+                  We have received your booking and payment.
+                </p>
+                {/* Arrow connector for desktop */}
+                <div className="hidden md:block absolute top-7 sm:top-8 -right-3 sm:-right-4 translate-x-1/2 z-10">
+                  <ArrowRight className="w-4 h-4 text-saffron/40" />
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center text-center relative px-1">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron mb-2.5 shadow-sm shrink-0">
+                  <Landmark className="w-6 h-6 sm:w-7 sm:h-7 text-saffron" />
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-foreground mb-1">2. Puja Will Be Performed</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
+                  Our temple priest will perform the puja on <span className="font-semibold text-saffron">{formatDate(booking.date)}</span>.
+                </p>
+                {/* Arrow connector for desktop */}
+                <div className="hidden md:block absolute top-7 sm:top-8 -right-3 sm:-right-4 translate-x-1/2 z-10">
+                  <ArrowRight className="w-4 h-4 text-saffron/40" />
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center text-center relative px-1">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron mb-2.5 shadow-sm shrink-0">
+                  <Video className="w-6 h-6 sm:w-7 sm:h-7 text-saffron" />
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-foreground mb-1">3. Receive Puja Video</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
+                  You will get photo/video on WhatsApp after puja.
+                </p>
+                {/* Arrow connector for desktop */}
+                <div className="hidden md:block absolute top-7 sm:top-8 -right-3 sm:-right-4 translate-x-1/2 z-10">
+                  <ArrowRight className="w-4 h-4 text-saffron/40" />
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-center text-center relative px-1">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron mb-2.5 shadow-sm shrink-0">
+                  <Gift className="w-6 h-6 sm:w-7 sm:h-7 text-saffron" />
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-foreground mb-1">4. Prasad Delivery</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
+                  Prasad will be sent to your address (if selected).
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Devotee Details */}
@@ -415,53 +517,7 @@ export function BookingDetailClient({
             </div>
           </div>
 
-          {/* What Happens Next? Flowchart Section */}
-          <div className="bg-card border border-border rounded-3xl p-5 md:p-6 space-y-6 shadow-sm">
-            <div className="flex items-center gap-2 border-b border-border/40 pb-2">
-              <Calendar className="w-5 h-5 text-saffron" />
-              <h3 className="font-heading text-base text-foreground">What Happens Next?</h3>
-            </div>
 
-            {/* Step Timeline (Vertical Stack on Sidebar) */}
-            <div className="space-y-6 relative pl-6 border-l-2 border-saffron/10 ml-3.5">
-
-              {/* Step 1 */}
-              <div className="relative">
-                <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-heading text-xs font-bold border-2 border-background">
-                  1
-                </div>
-                <h4 className="text-xs md:text-sm font-semibold text-foreground leading-tight">Booking Confirmed</h4>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-normal">We have successfully received your booking and devotee details.</p>
-              </div>
-
-              {/* Step 2 */}
-              <div className="relative">
-                <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-heading text-xs font-bold border-2 border-background">
-                  2
-                </div>
-                <h4 className="text-xs md:text-sm font-semibold text-foreground leading-tight">Puja Performed</h4>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-normal">Priest will conduct the sacred ritual on <span className="font-semibold text-saffron">{formatDate(booking.date)}</span>.</p>
-              </div>
-
-              {/* Step 3 */}
-              <div className="relative">
-                <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-heading text-xs font-bold border-2 border-background">
-                  3
-                </div>
-                <h4 className="text-xs md:text-sm font-semibold text-foreground leading-tight">Video Shared</h4>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-normal">Live photos and video proof will be shared directly on WhatsApp.</p>
-              </div>
-
-              {/* Step 4 */}
-              <div className="relative">
-                <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-saffron/10 text-saffron flex items-center justify-center font-heading text-xs font-bold border-2 border-background">
-                  4
-                </div>
-                <h4 className="text-xs md:text-sm font-semibold text-foreground leading-tight">Prasad Delivery</h4>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-normal">Sacred Prasad will be packed and shipped to your address.</p>
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>

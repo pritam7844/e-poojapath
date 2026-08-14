@@ -18,6 +18,8 @@ import {
   Minus,
   BookOpen,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Check,
   X,
   Clock,
@@ -1019,7 +1021,7 @@ export function PujaDetailClient({
             {/* Benefits */}
             {puja.benefits && puja.benefits.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl text-foreground mb-4">Spiritual Benefits</h2>
+                <h2 className="font-heading text-2xl text-foreground mb-4">Devotees seek blessings for</h2>
                 <div className="card-devotional grid grid-cols-1 md:grid-cols-2 gap-3">
                   {puja.benefits.map((b) => (
                     <div key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -1132,45 +1134,65 @@ export function PujaDetailClient({
                     <Star key={i} size={18} className={i < Math.round(displayRating) ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
                   ))}
                 </div>
-                <h2 className="font-heading text-2xl text-foreground">
-                  {displayRating} Stories of Blessed Experiences
+                <h2 className="font-heading text-xl sm:text-2xl text-foreground">
+                  {displayRating.toFixed(1)} Stories of Blessed Experiences
                 </h2>
               </div>
-              <div className="relative overflow-hidden w-full">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
+              <div className="relative w-full">
+                {/* Left navigation arrow */}
+                <button
+                  onClick={() => setCurrentReviewIndex((prev) => (prev <= 0 ? reviewsList.length - 1 : prev - 1))}
+                  className="absolute -left-2.5 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white border border-border/80 text-foreground shadow-md flex items-center justify-center hover:bg-saffron hover:text-white transition"
+                  aria-label="Previous review"
                 >
-                  {reviewsList.map((review, i) => (
-                    <div key={i} className="w-full shrink-0 px-1 select-none">
-                      <div className="card-devotional w-full min-h-[140px] flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center gap-1 mb-2">
-                            {Array.from({ length: 5 }).map((_, j) => (
-                              <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
-                            ))}
+                  <ChevronLeft size={16} />
+                </button>
+
+                {/* Right navigation arrow */}
+                <button
+                  onClick={() => setCurrentReviewIndex((prev) => (prev >= reviewsList.length - 1 ? 0 : prev + 1))}
+                  className="absolute -right-2.5 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white border border-border/80 text-foreground shadow-md flex items-center justify-center hover:bg-saffron hover:text-white transition"
+                  aria-label="Next review"
+                >
+                  <ChevronRight size={16} />
+                </button>
+
+                <div className="overflow-hidden w-full rounded-2xl">
+                  <div 
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
+                  >
+                    {reviewsList.map((review, i) => (
+                      <div key={i} className="w-full shrink-0 select-none">
+                        <div className="card-devotional w-full min-h-[140px] flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center gap-1 mb-2">
+                              {Array.from({ length: 5 }).map((_, j) => (
+                                <Star key={j} size={12} className={j < review.stars ? "fill-saffron text-saffron" : "fill-muted text-muted"} />
+                              ))}
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
                           </div>
-                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
+                          <p className="text-xs font-semibold text-foreground">— {review.name}</p>
                         </div>
-                        <p className="text-xs font-semibold text-foreground">— {review.name}</p>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+              </div>
                 
-                {/* Dots indicators */}
-                <div className="flex justify-center gap-2 mt-4">
-                  {reviewsList.map((_, i) => (
-                    <button 
-                      key={i}
-                      onClick={() => setCurrentReviewIndex(i)}
-                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                        i === currentReviewIndex ? 'bg-saffron w-6' : 'bg-muted/65 hover:bg-muted'
-                      }`}
-                      aria-label={`Go to slide ${i + 1}`}
-                    />
-                  ))}
-                </div>
+              {/* Dots indicators */}
+              <div className="flex justify-center gap-2 mt-4">
+                {reviewsList.map((_, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => setCurrentReviewIndex(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      i === currentReviewIndex ? 'bg-saffron w-6' : 'bg-muted/65 hover:bg-muted'
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
               </div>
             </section>
 
@@ -1206,7 +1228,7 @@ export function PujaDetailClient({
               <div className="flex items-center justify-center gap-8 mt-6">
                 <div className="text-center">
                   <p className="font-heading text-2xl text-saffron">
-                    {stats.devotees > 0 ? `${stats.devotees.toLocaleString("en-IN")}+` : "50 Lakh+"}
+                    {stats.devotees > 0 ? `${stats.devotees.toLocaleString("en-IN")}+` : "500+"}
                   </p>
                   <p className="text-xs text-muted-foreground">Trusted Bhakts</p>
                 </div>
@@ -1218,7 +1240,7 @@ export function PujaDetailClient({
                 </div>
                 <div className="text-center">
                   <p className="font-heading text-2xl text-saffron">
-                    {displayRating > 0 ? `${displayRating.toFixed(1)}★` : "4.8★"}
+                    4.9★
                   </p>
                   <p className="text-xs text-muted-foreground">Avg Rating</p>
                 </div>

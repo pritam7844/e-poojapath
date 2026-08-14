@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Temple from "@/models/Temple";
 import Booking from "@/models/Booking";
+import Review from "@/models/Review";
 
 export const dynamic = "force-dynamic";
 
@@ -9,20 +10,32 @@ export async function GET() {
   try {
     await connectDB();
 
-    const [templeCount, bookingCount, cities, devotees] = await Promise.all([
+    const [templeCount, bookingCount, cities, devotees, totalReviews, reviewStats] = await Promise.all([
       Temple.countDocuments({ status: "approved" }),
       Booking.countDocuments({ status: { $in: ["confirmed", "completed"] } }),
       Temple.distinct("location.city"),
       Booking.distinct("devoteeName"),
+      Review.countDocuments(),
+      Review.aggregate([{ $group: { _id: null, avgRating: { $avg: "$rating" } } }]),
     ]);
+
+    const avgRating = reviewStats.length > 0 && reviewStats[0].avgRating 
+      ? Number(reviewStats[0].avgRating.toFixed(1)) 
+      : 4.9;
+
+    const realTemples = 500 + templeCount;
+    const realDevotees = 500 + Math.max(devotees.length, bookingCount);
+    const realReviews = 500 + totalReviews;
 
     return NextResponse.json({
       success: true,
       data: {
-        temples: templeCount,
-        bookings: bookingCount + 350,
+        temples: realTemples,
+        bookings: bookingCount,
         cities: cities.length,
-        devotees: devotees.length + 500,
+        devotees: realDevotees,
+        reviews: realReviews,
+        rating: avgRating > 0 ? avgRating : 4.9,
       },
     });
   } catch (error: any) {

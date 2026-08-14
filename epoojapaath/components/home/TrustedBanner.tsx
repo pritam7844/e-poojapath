@@ -9,8 +9,8 @@ export function TrustedBanner() {
   const { t } = useLang();
   const [reviews, setReviews] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [totalReviews, setTotalReviews] = useState<number>(0);
-  const [avgRating, setAvgRating] = useState<number>(4.8);
+  const [totalReviews, setTotalReviews] = useState<number>(500);
+  const [avgRating, setAvgRating] = useState<number>(4.9);
 
   useEffect(() => {
     fetch("/api/public/testimonials")
@@ -87,8 +87,8 @@ export function TrustedBanner() {
             </div>
             <h4 className="text-sm font-bold text-gray-800">
               {t(
-                `${500 + totalReviews}+ Devotees Trusted`,
-                `${500 + totalReviews}+ श्रद्धालुओं द्वारा विश्वसनीय`
+                `${totalReviews >= 500 ? totalReviews : 500 + totalReviews}+ Devotees Trusted`,
+                `${totalReviews >= 500 ? totalReviews : 500 + totalReviews}+ श्रद्धालुओं द्वारा विश्वसनीय`
               )}
             </h4>
             <p className="text-xs text-gray-500 font-medium">

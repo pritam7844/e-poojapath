@@ -30,7 +30,7 @@ export async function GET() {
     ]);
     const averageRating = stats.length > 0 && stats[0].avgRating 
       ? Number(stats[0].avgRating.toFixed(1)) 
-      : 4.8;
+      : 4.9;
 
     return NextResponse.json({
       success: true,

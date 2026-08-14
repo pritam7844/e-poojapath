@@ -215,7 +215,7 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
             </div>
             {Array.isArray(puja.benefits) && puja.benefits.length > 0 && (
               <div className="card-devotional mb-4">
-                <h3 className="font-heading text-lg text-foreground mb-3">Benefits</h3>
+                <h3 className="font-heading text-lg text-foreground mb-3">Devotees seek blessings for</h3>
                 <ul className="space-y-2">
                   {(puja.benefits as string[]).map((b) => (
                     <li key={b} className="flex items-center gap-2 text-sm text-muted-foreground">
