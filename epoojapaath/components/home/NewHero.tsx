@@ -16,12 +16,11 @@ export function NewHero() {
   ];
 
   return (
-    <section className="px-4 pt-20 pb-4 md:pt-24 md:pb-6 max-w-7xl mx-auto">
-      {/* Main Banner Card matching the mockup design with rounded-2xl */}
-      <div className="relative bg-gradient-to-r from-[#FFF5EE] via-[#FFEFE6] to-[#FFEFE6] rounded-2xl overflow-hidden shadow-sm flex flex-row items-stretch min-h-[220px] sm:min-h-[300px] md:min-h-[420px]">
+    <section className="w-full relative pt-16 sm:pt-20 md:pt-24 pb-4 sm:pb-6 bg-gradient-to-r from-[#FFF5EE] via-[#FFEFE6] to-[#FFEFE6] overflow-hidden shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex flex-row items-center min-h-[240px] sm:min-h-[320px] md:min-h-[440px]">
         
         {/* Left - Content Area */}
-        <div className="flex flex-col justify-center p-4 pr-1 sm:p-8 md:p-12 w-[58%] md:w-[52%] lg:w-[48%] shrink-0 z-20 relative bg-transparent">
+        <div className="flex flex-col justify-center py-4 pr-1 sm:py-8 md:py-12 w-[58%] md:w-[52%] lg:w-[48%] shrink-0 z-20 relative bg-transparent">
           <h1 className="font-heading text-[13px] sm:text-3xl md:text-4xl lg:text-5xl text-[#4A1A0C] font-extrabold leading-[1.15]">
             {t("Experience Divine Blessings From ", "Experience Divine Blessings From ")}
             <span className="text-[#D45B0A]">
@@ -80,29 +79,28 @@ export function NewHero() {
           </div>
         </div>
 
-        {/* Right - Image block aligned absolutely to stretch over the full card width to hide edge lines */}
+        {/* Right - Image block stretching across screen edge to edge */}
         <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
-          {/* The image spans the entire card, so it has no left edge in the middle of the card */}
           <Image
             src="/hero-puja-new.png"
             alt="Priests Performing Puja"
             fill
             priority
-            sizes="(max-width: 768px) 100vw, 60vw"
+            sizes="100vw"
             className="object-cover object-right md:object-center z-10 scale-105"
           />
-          {/* Diagonal Blend Mask using CSS Gradient (Full width = No edge line!) */}
+          {/* Diagonal Blend Mask */}
           <div 
             className="absolute inset-0 z-20 pointer-events-none"
             style={{
-              background: 'linear-gradient(108deg, #FFEFE6 20%, #FFEFE6 38%, rgba(255, 239, 230, 0.8) 46%, rgba(255, 239, 230, 0.2) 68%, transparent 86%)'
+              background: 'linear-gradient(108deg, #FFEFE6 25%, #FFEFE6 42%, rgba(255, 239, 230, 0.85) 50%, rgba(255, 239, 230, 0.2) 72%, transparent 90%)'
             }}
           />
         </div>
       </div>
 
-      {/* Slide dots below the card container */}
-      <div className="flex justify-center gap-2 mt-4">
+      {/* Slide dots below */}
+      <div className="flex justify-center gap-2 mt-2 sm:mt-3 relative z-30">
         <span className="w-2 h-2 rounded-full bg-saffron" />
         <span className="w-2 h-2 rounded-full bg-gray-300/80" />
         <span className="w-2 h-2 rounded-full bg-gray-300/80" />
