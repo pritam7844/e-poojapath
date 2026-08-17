@@ -25,7 +25,7 @@ interface SelectProps {
   containerClassName?: string;
 }
 
-const baseInput = "w-full border border-border bg-card-bg rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/60 font-body text-sm focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent transition-all disabled:opacity-60";
+const baseInput = "w-full border border-border bg-card-bg rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/60 font-body text-sm focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent transition-all disabled:opacity-60 truncate";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className, ...props }, ref) => (
