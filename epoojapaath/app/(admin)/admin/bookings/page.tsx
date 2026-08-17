@@ -75,6 +75,16 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
     { key: "amount",      header: "Amount",   render: (b: BookingRow) => formatCurrency(b.amount) },
     { key: "dakshina",    header: "Dakshina", render: (b: BookingRow) => b.dakshina ? formatCurrency(b.dakshina) : "—" },
     { key: "serviceType", header: "Type",     render: (b: BookingRow) => <Badge variant={b.serviceType === "puja" ? "saffron" : "purple"}>{b.serviceType}</Badge> },
+    { key: "source",      header: "Source",   render: (b: BookingRow) => {
+      const isMeta = b.utmSource || b.fbclid;
+      return isMeta ? (
+        <span className="inline-flex items-center gap-1 bg-[#1877F2]/10 text-[#1877F2] font-semibold px-2 py-0.5 rounded text-[10px] border border-[#1877F2]/20">
+          Meta Ads ({b.utmSource || "FB/IG"})
+        </span>
+      ) : (
+        <span className="text-[10px] text-muted-foreground">Direct / Organic</span>
+      );
+    }},
     { key: "status",      header: "Status",   render: (b: BookingRow) => {
       const statusMap: Record<string, any> = {
         pending: "pending",
