@@ -710,6 +710,17 @@ export function PujaDetailClient({
       {!showMobileSidebar && (
         <>
           <div ref={buttonRef} className="z-30 bg-background px-4 py-4 border-b border-border md:hidden">
+            {/* Highlighted Limited Puja Slot Alert Banner for Mobile */}
+            <div className="mb-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white text-xs sm:text-sm font-extrabold px-3.5 py-2.5 rounded-xl shadow-md border border-amber-300/40">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+              </span>
+              <span className="tracking-wide text-center">
+                {puja.slotsText || "🔥 Limited Puja Slots Available — Book Soon!"}
+              </span>
+            </div>
+
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-heading text-lg text-foreground">Select Package</h3>
             </div>
