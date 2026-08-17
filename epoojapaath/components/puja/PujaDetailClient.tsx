@@ -221,15 +221,15 @@ export function PujaDetailClient({
   const [stats, setStats] = useState({ temples: 0, bookings: 0, devotees: 0 });
 
   useEffect(() => {
-    fetch("/api/public/stats")
-      .then((res) => res.json())
-      .then((d) => {
-        if (d.success && d.data) {
-          setStats(d.data);
-        }
-      })
-      .catch((err) => console.error("Error loading stats:", err));
-  }, []);
+    if (puja) {
+      fpixel.viewContent({
+        content_name: puja.name,
+        content_category: temple?.name || "Puja Service",
+        value: puja.price || 0,
+        currency: "INR",
+      });
+    }
+  }, [puja, temple]);
 
   // ── Price calculations ────────────────────────────────────────────────────
   const [duration, setDuration] = useState<number>(1);
@@ -243,149 +243,85 @@ export function PujaDetailClient({
 
   // ── Chadawa section renderer ────────────────────────────────────────────────
   const renderChadawaSection = (isMobileLayout: boolean = false) => {
+    const displayedMobileChadawa = showAllMobileChadawa ? chadawaItems : chadawaItems.slice(0, 3);
+    const hasMoreChadawa = chadawaItems.length > 3;
+
     return (
       <section className="relative">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="font-heading text-lg md:text-2xl text-foreground">
+            <h2 className="font-heading text-base md:text-2xl text-foreground font-bold">
               Add Sacred Chadawa <span className="text-xs font-semibold text-muted-foreground ml-1">(Optional)</span>
             </h2>
-            <p className="text-xs md:text-sm text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
+            <p className="text-[11px] md:text-sm text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowAllMobileChadawa(!showAllMobileChadawa)}
-              type="button"
-              className="text-saffron text-xs font-semibold hover:underline md:hidden bg-saffron/5 border border-saffron/20 rounded-full px-3 py-1"
-            >
-              {showAllMobileChadawa ? "Show Less" : "View All"}
-            </button>
-            {selectedChadawa.length > 0 && (
-              <div className="bg-saffron/10 border border-saffron/30 rounded-full px-2.5 py-0.5 md:px-3 md:py-1 flex items-center gap-1">
-                <span className="text-saffron text-xs font-semibold">{selectedChadawa.length} selected</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Carousel View / Grid Toggle */}
-        <div className="block md:hidden">
-          {showAllMobileChadawa ? (
-            /* Grid View */
-            <div className="grid grid-cols-2 gap-3 px-1">
-              {chadawaItems.map((item) => {
-                const selected = isSelected(item._id);
-                return (
-                  <div
-                    key={item._id}
-                    onClick={() => toggleChadawa(item)}
-                    className={`card-devotional cursor-pointer overflow-hidden p-0 group transition-all duration-200 w-full flex flex-col justify-between ${
-                      selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10 border-saffron bg-saffron/5" : "border-border bg-card"
-                    }`}
-                  >
-                    <div>
-                      <div className="relative h-24 w-full overflow-hidden">
-                        <Image
-                          src={item.image || "/kasbeswari.jpg"}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="p-2">
-                        <p className="font-heading text-xs text-foreground line-clamp-1 leading-tight">{item.name}</p>
-                        <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="p-2 pt-0 flex items-center justify-between">
-                      <p className="font-heading text-sm text-foreground">₹{item.price}</p>
-                      <div
-                        className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                          selected ? "bg-saffron border-saffron text-white" : "border-muted-foreground/30 bg-background"
-                        }`}
-                      >
-                        {selected && <Check size={10} strokeWidth={3} />}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            /* Sliding Carousel View */
-            <div className="relative px-6">
-              {/* Left Arrow */}
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollChadawa("left"); }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-background/95 border border-border flex items-center justify-center shadow-md hover:bg-background active:scale-95 transition text-foreground cursor-pointer pointer-events-auto"
-                type="button"
-                aria-label="Scroll Left"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              {/* Right Arrow */}
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollChadawa("right"); }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-background/95 border border-border flex items-center justify-center shadow-md hover:bg-background active:scale-95 transition text-foreground cursor-pointer pointer-events-auto"
-                type="button"
-                aria-label="Scroll Right"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              <div
-                ref={isMobileLayout ? chadawaSliderRef : null}
-                className="flex overflow-x-auto snap-x snap-mandatory gap-3 scroll-smooth pb-3 px-1 no-scrollbar relative z-10"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-              >
-                {chadawaItems.map((item) => {
-                  const selected = isSelected(item._id);
-                  return (
-                    <div
-                      key={item._id}
-                      onClick={() => toggleChadawa(item)}
-                      className={`card-devotional cursor-pointer overflow-hidden p-0 group transition-all duration-200 w-[calc(50%-6px)] shrink-0 snap-start flex flex-col justify-between ${
-                        selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10 border-saffron bg-saffron/5" : "border-border bg-card"
-                      }`}
-                    >
-                      <div>
-                        <div className="relative h-24 w-full overflow-hidden">
-                          <Image
-                            src={item.image || "/kasbeswari.jpg"}
-                            alt={item.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div className="p-2">
-                          <p className="font-heading text-xs text-foreground line-clamp-1 leading-tight">{item.name}</p>
-                          <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="p-2 pt-0 flex items-center justify-between">
-                        <p className="font-heading text-sm text-foreground">₹{item.price}</p>
-                        <div
-                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                            selected ? "bg-saffron border-saffron text-white" : "border-muted-foreground/30 bg-background"
-                          }`}
-                        >
-                          {selected && <Check size={10} strokeWidth={3} />}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {selectedChadawa.length > 0 && (
+            <div className="bg-saffron/10 border border-saffron/30 rounded-full px-2.5 py-0.5 md:px-3 md:py-1 flex items-center gap-1">
+              <span className="text-saffron text-xs font-semibold">{selectedChadawa.length} selected</span>
             </div>
           )}
         </div>
+
+        {/* Mobile 3-Column Grid View */}
+        <div className="block md:hidden">
+          <div className="grid grid-cols-3 gap-2 px-0.5">
+            {displayedMobileChadawa.map((item) => {
+              const selected = isSelected(item._id);
+              return (
+                <div
+                  key={item._id}
+                  onClick={() => toggleChadawa(item)}
+                  className={`card-devotional cursor-pointer overflow-hidden p-1.5 group transition-all duration-200 w-full flex flex-col justify-between ${
+                    selected ? "ring-2 ring-saffron shadow-md shadow-saffron/20 border-saffron bg-saffron/10" : "border-border bg-card"
+                  }`}
+                >
+                  <div>
+                    <div className="relative h-16 w-full rounded-lg overflow-hidden mb-1">
+                      <Image
+                        src={item.image || "/kasbeswari.jpg"}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {selected && (
+                        <div className="absolute top-1 right-1 w-4 h-4 bg-saffron rounded-full flex items-center justify-center shadow">
+                          <Check size={10} className="text-white" strokeWidth={3} />
+                        </div>
+                      )}
+                    </div>
+                    <p className="font-heading text-[10px] font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
+                  </div>
+
+                  <div className="mt-1 flex items-center justify-between pt-1 border-t border-border/40">
+                    <p className="font-heading text-xs font-bold text-saffron">₹{item.price}</p>
+                    <div
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-colors ${
+                        selected ? "bg-saffron text-white" : "bg-saffron/10 text-saffron border border-saffron/20"
+                      }`}
+                    >
+                      {selected ? "Added" : "+ Add"}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* See More / Show Less Button for Mobile */}
+          {hasMoreChadawa && (
+            <div className="mt-3 text-center">
+              <button
+                onClick={() => setShowAllMobileChadawa(!showAllMobileChadawa)}
+                type="button"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-saffron/30 bg-saffron/5 text-saffron text-xs font-bold hover:bg-saffron/10 active:scale-95 transition-all shadow-sm"
+              >
+                <span>{showAllMobileChadawa ? "Show Less" : `See More (${chadawaItems.length - 3} More)`}</span>
+                {showAllMobileChadawa ? <ChevronDown size={14} className="rotate-180 transition-transform" /> : <ChevronDown size={14} />}
+              </button>
+            </div>
+          )}
+        </div>
+
 
         {/* Desktop Grid View */}
         <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1297,15 +1233,15 @@ export function PujaDetailClient({
                       {selectedPkg ? selectedPkg.persons : "Select package"}
                     </p>
                     <p className="font-heading text-3xl text-saffron">{formatCurrency(pujaPrice)}</p>
-                    {puja.slotsText && (
-                      <div className="mt-2.5 w-full flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] px-3 py-1.5 rounded-md font-semibold shadow-sm">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                        </span>
-                        {puja.slotsText}
-                      </div>
-                    )}
+                    <div className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white text-xs sm:text-sm md:text-base font-extrabold px-3.5 py-2.5 rounded-xl shadow-md border border-amber-300/40">
+                      <span className="relative flex h-2.5 w-2.5 shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                      </span>
+                      <span className="tracking-wide text-center">
+                        {puja.slotsText || "🔥 Limited Puja Slots Available — Book Soon!"}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Package options */}

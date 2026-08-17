@@ -55,6 +55,12 @@ export default function BookPujaPage({ params }: { params: { slug: string; id: s
         if (d.success) {
           setPuja(d.data);
           setAds(d.ads || []);
+          fpixel.viewContent({
+            content_name: d.data.name,
+            content_category: "Puja Service",
+            value: d.data.price || 0,
+            currency: "INR",
+          });
           if (d.data.availableDates && d.data.availableDates.length > 0) {
             const firstDate = d.data.availableDates[0];
             setForm(f => ({ ...f, date: firstDate }));

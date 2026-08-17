@@ -131,7 +131,17 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
   useEffect(() => {
     fetch(`/api/chadawa/${params.id}`)
       .then((r) => r.json())
-      .then((d) => setChadawa(d.data));
+      .then((d) => {
+        if (d.data) {
+          setChadawa(d.data);
+          fpixel.viewContent({
+            content_name: d.data.name,
+            content_category: "Chadawa Offering",
+            value: d.data.price || 0,
+            currency: "INR",
+          });
+        }
+      });
   }, [params.id]);
 
   const templeObj = typeof chadawa?.temple === "object" ? chadawa.temple : null;

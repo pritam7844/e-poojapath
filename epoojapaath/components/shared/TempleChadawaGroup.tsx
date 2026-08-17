@@ -30,15 +30,15 @@ export function TempleChadawaGroup({ templeName, templeSlug, items }: TempleChad
   const hasMore = items.length > 3;
 
   return (
-    <div className="mb-12">
+    <div className="mb-10">
       {/* Group Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-saffron to-deep-gold flex items-center justify-center text-white text-lg flex-shrink-0">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-saffron to-deep-gold flex items-center justify-center text-white text-base md:text-lg flex-shrink-0">
           🛕
         </div>
         <div>
-          <h3 className="font-heading text-xl text-foreground">{templeName}</h3>
-          <p className="text-xs text-muted-foreground">Special Chadawa</p>
+          <h3 className="font-heading text-lg md:text-xl font-bold text-foreground">{templeName}</h3>
+          <p className="text-[11px] md:text-xs text-muted-foreground">Special Chadawa</p>
         </div>
         {templeSlug && (
           <Link
@@ -50,19 +50,19 @@ export function TempleChadawaGroup({ templeName, templeSlug, items }: TempleChad
         )}
       </div>
 
-      {/* Grid of Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Grid of Cards: 3 on mobile, 2 on tablet, 3 on desktop */}
+      <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
         {visibleItems.map((item) => (
           <SpecialChadawaCard key={item._id} item={item} />
         ))}
       </div>
 
-      {/* Show All / Show Less Toggle Button */}
+      {/* See More / Show Less Toggle Button */}
       {hasMore && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-6">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="group btn-outline-gold px-6 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 hover:scale-105 transition-all shadow-sm duration-300"
+            className="group btn-outline-gold px-5 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 hover:scale-105 transition-all shadow-sm duration-300"
           >
             {expanded ? (
               <>
@@ -71,7 +71,7 @@ export function TempleChadawaGroup({ templeName, templeSlug, items }: TempleChad
               </>
             ) : (
               <>
-                <span>Show All ({items.length})</span>
+                <span>See More ({items.length - 3} More)</span>
                 <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
               </>
             )}
@@ -85,57 +85,40 @@ export function TempleChadawaGroup({ templeName, templeSlug, items }: TempleChad
 // ── Special Chadawa Card ──────────────────────────────────────────────────────
 function SpecialChadawaCard({ item }: { item: SpecialChadawaItem }) {
   return (
-    <div className="card-devotional group overflow-hidden p-0 flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+    <div className="card-devotional group overflow-hidden p-0 flex flex-col h-full hover:shadow-lg transition-shadow duration-300 border border-border/60">
       {/* Image */}
-      <div className="relative h-44 overflow-hidden">
+      <div className="relative h-20 md:h-44 overflow-hidden">
         <Image
           src={item.image || "/placeholder-puja.jpg"}
           alt={item.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         {/* Special badge */}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-2 left-2 hidden md:block">
           <span className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg">
             ✨ Special
           </span>
         </div>
-        {/* Temple badge */}
-        <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full font-medium backdrop-blur-sm">
-          🛕 {typeof item.temple === "object" ? item.temple.name : "Temple"}
-        </div>
-        <div className="absolute bottom-3 left-3 right-3">
-          <p className="text-white font-heading text-base leading-tight line-clamp-2">{item.name}</p>
-          {item.nameHi && <p className="text-white/70 font-sanskrit text-xs mt-0.5">{item.nameHi}</p>}
+        <div className="absolute bottom-1.5 md:bottom-3 left-1.5 md:left-3 right-1.5 md:right-3">
+          <p className="text-white font-heading text-[11px] md:text-base leading-tight line-clamp-1 md:line-clamp-2">{item.name}</p>
+          {item.nameHi && <p className="text-white/70 font-sanskrit text-[9px] md:text-xs mt-0.5 hidden md:block">{item.nameHi}</p>}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col flex-1">
-        <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3 mb-3 flex-1">
+      <div className="p-2 md:p-4 flex flex-col flex-1">
+        <p className="text-muted-foreground text-[10px] md:text-xs leading-relaxed line-clamp-1 md:line-clamp-3 mb-2 md:mb-3 flex-1">
           {item.description}
         </p>
-        {item.items && item.items.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-3">
-            {item.items.slice(0, 3).map((i: string) => (
-              <span key={i} className="bg-saffron/10 text-saffron text-xs px-2 py-0.5 rounded-full border border-saffron/20">
-                {i}
-              </span>
-            ))}
-            {item.items.length > 3 && (
-              <span className="text-xs text-muted-foreground px-1">+{item.items.length - 3} more</span>
-            )}
-          </div>
-        )}
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between mt-auto pt-2 md:pt-3 border-t border-border gap-1">
           <div>
-            <p className="font-heading text-xl text-saffron">₹{item.price}</p>
-            <p className="text-xs text-muted-foreground">Special Offering</p>
+            <p className="font-heading text-xs md:text-xl font-bold text-saffron">₹{item.price}</p>
           </div>
           <Link
             href={`/chadawa/${item._id}`}
-            className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-90 transition shadow"
+            className="bg-gradient-to-r from-saffron to-deep-gold text-white text-[10px] md:text-xs font-bold px-2.5 md:px-4 py-1 md:py-2 rounded-md md:rounded-full hover:opacity-90 transition shadow text-center"
           >
             Book Now →
           </Link>
