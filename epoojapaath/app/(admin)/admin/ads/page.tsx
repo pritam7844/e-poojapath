@@ -11,6 +11,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { devToast } from "@/lib/toast";
 import { formatDateShort } from "@/lib/utils";
 import type { IAd } from "@/types";
+import { MetaPixelActivity } from "@/components/admin/MetaPixelActivity";
 
 type AdRow = IAd & { _id: string };
 
@@ -118,10 +119,14 @@ export default function AdminAdsPage() {
 
   return (
     <DashboardShell
-      title="Ads Manager"
-      subtitle="Create and manage ad banners across the platform."
+      title="Ads & Meta Pixel Manager"
+      subtitle="Track live Meta Pixel conversion events, campaign insights, and manage ad banners."
       action={<Button onClick={() => setShowForm(!showForm)} size="sm">{showForm ? "Cancel" : "+ New Ad"}</Button>}
     >
+      <div className="space-y-8 mb-8">
+        <MetaPixelActivity />
+      </div>
+
       {showForm && (
         <Card className="mb-6">
           <h3 className="font-heading text-lg text-foreground mb-4">Create Ad</h3>

@@ -8,16 +8,15 @@ import Blog from "@/models/Blog";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { Landmark, Users, BookOpen, IndianRupee, Megaphone, FileText, HandCoins, TrendingUp, Percent, Eye, Sparkles, AlertCircle } from "lucide-react";
-import { getAdAccountInsights } from "@/services/meta.service";
+import { MetaPixelActivity } from "@/components/admin/MetaPixelActivity";
 
 async function getStats() {
   await connectDB();
-  const [temples, users, bookings, blogs, metaResult] = await Promise.all([
+  const [temples, users, bookings, blogs] = await Promise.all([
     Temple.countDocuments(),
     User.countDocuments(),
     Booking.countDocuments(),
     Blog.countDocuments({ status: "published" }),
-    getAdAccountInsights("this_month"),
   ]);
   const revenue = await Booking.aggregate([
     { $match: { paymentStatus: "paid" } },
@@ -29,7 +28,6 @@ async function getStats() {
     bookings,
     blogs,
     revenue: revenue[0]?.total || 0,
-    meta: metaResult.success && metaResult.data ? { simulated: metaResult.simulated, data: metaResult.data } : null,
   };
 }
 
@@ -40,11 +38,13 @@ export default async function AdminDashboard() {
   const stats = await getStats();
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="font-heading text-3xl text-foreground mb-2">Admin Dashboard</h1>
-      <p className="text-muted-foreground mb-8">Welcome back, {session.user.name} 🙏</p>
+    <div className="p-6 max-w-7xl mx-auto space-y-10">
+      <div>
+        <h1 className="font-heading text-3xl text-foreground mb-1">Admin Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back, {session.user.name} 🙏</p>
+      </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {[
           { label: "Total Temples",  value: stats.temples,                icon: <Landmark     size={22} />, color: "border-l-saffron"       },
           { label: "Total Users",    value: stats.users,                  icon: <Users        size={22} />, color: "border-l-lotus-blue"    },
@@ -59,84 +59,8 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Meta Ads Campaign Insights */}
-      {stats.meta && (
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-heading text-xl text-foreground flex items-center gap-2">
-              <Megaphone className="text-saffron" size={20} />
-              Meta Ads Performance (This Month)
-              {stats.meta.simulated && (
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 rounded-md border border-yellow-500/20">
-                  Simulated
-                </span>
-              )}
-            </h2>
-            {stats.meta.simulated && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <AlertCircle size={14} className="text-yellow-600 dark:text-yellow-400" />
-                Configure META_ACCESS_TOKEN in env for live stats.
-              </span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              {
-                label: "Ad Spend",
-                value: formatCurrency(stats.meta.data.spend),
-                icon: <IndianRupee size={20} />,
-                color: "border-l-saffron",
-              },
-              {
-                label: "Leads Generated",
-                value: stats.meta.data.leads,
-                icon: <Sparkles size={20} />,
-                color: "border-l-[#EC9DD4]",
-              },
-              {
-                label: "Cost Per Lead (CPL)",
-                value: formatCurrency(stats.meta.data.cpl),
-                icon: <TrendingUp size={20} />,
-                color: "border-l-green-500",
-              },
-              {
-                label: "Click-Through Rate (CTR)",
-                value: `${stats.meta.data.ctr}%`,
-                icon: <Percent size={20} />,
-                color: "border-l-[#94AAEE]",
-              },
-            ].map(({ label, value, icon, color }) => (
-              <div key={label} className={`card-devotional border-l-4 ${color}`}>
-                <div className="mb-2 text-saffron">{icon}</div>
-                <div className="font-heading text-xl text-foreground">{value}</div>
-                <div className="text-muted-foreground text-xs">{label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 bg-muted/35 p-3 rounded-2xl border border-border/50">
-            <div className="text-center p-2">
-              <div className="text-xs text-muted-foreground">Impressions</div>
-              <div className="font-heading text-sm text-foreground">{stats.meta.data.impressions.toLocaleString()}</div>
-            </div>
-            <div className="text-center p-2">
-              <div className="text-xs text-muted-foreground">Link Clicks</div>
-              <div className="font-heading text-sm text-foreground">{stats.meta.data.clicks.toLocaleString()}</div>
-            </div>
-            <div className="text-center p-2">
-              <div className="text-xs text-muted-foreground">Reach</div>
-              <div className="font-heading text-sm text-foreground">{stats.meta.data.reach.toLocaleString()}</div>
-            </div>
-            <div className="text-center p-2 flex flex-col justify-center items-center">
-              <div className="text-xs text-muted-foreground">Ad Account Status</div>
-              <div className="text-xs font-semibold text-green-600 flex items-center justify-center gap-1 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Active
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Meta Pixel & Ads Activity Breakdown */}
+      <MetaPixelActivity />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card-devotional">
