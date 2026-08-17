@@ -106,20 +106,35 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
 
   return (
     <DashboardShell title="All Bookings" subtitle={`${bookings.length} bookings total`}>
-      {/* Filters */}
-      <form method="GET" className="flex flex-wrap gap-3 mb-6">
-        <Select name="status" defaultValue={searchParams.status} className="py-2 text-sm w-40"
+      {/* Filters in 1 single horizontal row */}
+      <form method="GET" className="flex flex-row flex-wrap items-center gap-2.5 mb-6 p-3 rounded-2xl bg-card-bg/60 border border-border/60 shadow-xs">
+        <Select
+          name="status"
+          defaultValue={searchParams.status}
+          containerClassName="w-36 sm:w-44"
+          className="py-2 text-sm"
           placeholder="All Status"
-          options={["pending","confirmed","completed","cancelled"].map((s) => ({ value: s, label: s }))} />
-        <Select name="serviceType" defaultValue={searchParams.serviceType} className="py-2 text-sm w-40"
+          options={["pending","confirmed","completed","cancelled"].map((s) => ({ value: s, label: s }))}
+        />
+        <Select
+          name="serviceType"
+          defaultValue={searchParams.serviceType}
+          containerClassName="w-36 sm:w-44"
+          className="py-2 text-sm"
           placeholder="All Types"
-          options={[{ value: "puja", label: "Puja" }, { value: "chadawa", label: "Chadawa" }]} />
-        <Select name="paymentStatus" defaultValue={searchParams.paymentStatus} className="py-2 text-sm w-40"
+          options={[{ value: "puja", label: "Puja" }, { value: "chadawa", label: "Chadawa" }]}
+        />
+        <Select
+          name="paymentStatus"
+          defaultValue={searchParams.paymentStatus}
+          containerClassName="w-36 sm:w-44"
+          className="py-2 text-sm"
           placeholder="All Payments"
-          options={[{ value: "pending", label: "Pending" }, { value: "paid", label: "Paid" }, { value: "failed", label: "Failed" }]} />
-        <Button type="submit" size="sm">Filter</Button>
+          options={[{ value: "pending", label: "Pending" }, { value: "paid", label: "Paid" }, { value: "failed", label: "Failed" }]}
+        />
+        <Button type="submit" size="sm" className="h-[38px] px-5">Filter</Button>
         {(searchParams.status || searchParams.serviceType || searchParams.paymentStatus) && (
-          <a href="/admin/bookings" className="btn-outline-gold py-2 px-4 text-sm">Clear</a>
+          <a href="/admin/bookings" className="btn-outline-gold py-2 px-4 text-xs font-semibold rounded-xl h-[38px] flex items-center">Clear</a>
         )}
       </form>
       <DataTable columns={columns} data={bookings as any} emptyMessage="No bookings found." />

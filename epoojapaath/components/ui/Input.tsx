@@ -22,6 +22,7 @@ interface SelectProps {
   name?: string;
   defaultValue?: string;
   className?: string;
+  containerClassName?: string;
 }
 
 const baseInput = "w-full border border-border bg-card-bg rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/60 font-body text-sm focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent transition-all disabled:opacity-60";
@@ -48,9 +49,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 );
 Textarea.displayName = "Textarea";
 
-export function Select({ label, error, options, placeholder, className, ...props }: SelectProps) {
+export function Select({ label, error, options, placeholder, className, containerClassName, ...props }: SelectProps) {
   return (
-    <div className="w-full">
+    <div className={cn("w-full", containerClassName)}>
       {label && <label className="block text-sm font-medium text-foreground mb-1.5">{label}{props.required && <span className="text-lotus-pink ml-1">*</span>}</label>}
       <select className={cn(baseInput, error && "border-lotus-pink", className)} {...props}>
         {placeholder && <option value="">{placeholder}</option>}
