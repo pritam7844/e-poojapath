@@ -38,23 +38,23 @@ export default async function AdminDashboard() {
   const stats = await getStats();
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-10">
+    <div className="p-3 sm:p-5 md:p-6 max-w-7xl mx-auto space-y-6 sm:space-y-10">
       <div>
-        <h1 className="font-heading text-3xl text-foreground mb-1">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {session.user.name} 🙏</p>
+        <h1 className="font-heading text-xl sm:text-2xl md:text-3xl text-foreground mb-1">Admin Dashboard</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground">Welcome back, {session.user.name} 🙏</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {[
-          { label: "Total Temples",  value: stats.temples,                icon: <Landmark     size={22} />, color: "border-l-saffron"       },
-          { label: "Total Users",    value: stats.users,                  icon: <Users        size={22} />, color: "border-l-lotus-blue"    },
-          { label: "Total Bookings", value: stats.bookings,               icon: <BookOpen     size={22} />, color: "border-l-lotus-purple"  },
-          { label: "Total Revenue",  value: formatCurrency(stats.revenue),icon: <IndianRupee  size={22} />, color: "border-l-green-500"     },
+          { label: "Total Temples",  value: stats.temples,                icon: <Landmark     size={20} />, color: "border-l-saffron"       },
+          { label: "Total Users",    value: stats.users,                  icon: <Users        size={20} />, color: "border-l-lotus-blue"    },
+          { label: "Total Bookings", value: stats.bookings,               icon: <BookOpen     size={20} />, color: "border-l-lotus-purple"  },
+          { label: "Total Revenue",  value: formatCurrency(stats.revenue),icon: <IndianRupee  size={20} />, color: "border-l-green-500"     },
         ].map(({ label, value, icon, color }) => (
-          <div key={label} className={`card-devotional border-l-4 ${color}`}>
-            <div className="mb-3 text-saffron">{icon}</div>
-            <div className="font-heading text-2xl text-foreground">{value}</div>
-            <div className="text-muted-foreground text-sm">{label}</div>
+          <div key={label} className={`card-devotional border-l-4 p-3 sm:p-4 ${color}`}>
+            <div className="mb-2 text-saffron">{icon}</div>
+            <div className="font-heading text-lg sm:text-2xl text-foreground font-bold">{value}</div>
+            <div className="text-muted-foreground text-xs sm:text-sm leading-tight mt-0.5">{label}</div>
           </div>
         ))}
       </div>
