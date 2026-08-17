@@ -107,7 +107,7 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
   return (
     <DashboardShell title="All Bookings" subtitle={`${bookings.length} bookings total`}>
       {/* Filters strictly fit in 1 single row without sliding */}
-      <form method="GET" className="grid grid-cols-4 sm:flex sm:flex-row items-center gap-1 sm:gap-2.5 mb-6 p-2 sm:p-3 rounded-2xl bg-card-bg/60 border border-border/60 shadow-xs">
+      <form method="GET" className="grid grid-cols-4 sm:flex sm:flex-row items-center gap-1 sm:gap-2.5 mb-6 p-2 sm:p-3 rounded-2xl bg-card-bg/60 border border-border/60 shadow-xs sm:w-fit">
         <Select
           name="status"
           defaultValue={searchParams.status}
@@ -132,13 +132,13 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
           placeholder="Payment"
           options={[{ value: "pending", label: "Pending" }, { value: "paid", label: "Paid" }, { value: "failed", label: "Failed" }]}
         />
-        <div className="flex gap-1 items-center w-full">
-          <Button type="submit" size="sm" className="w-full h-[38px] px-1 sm:px-4 text-[11px] sm:text-sm font-bold flex items-center justify-center">
+        <div className="flex gap-1 items-center w-full sm:w-auto shrink-0">
+          <Button type="submit" size="sm" className="w-full sm:w-auto h-[38px] px-2 sm:px-6 text-[11px] sm:text-sm font-bold flex items-center justify-center">
             Filter
           </Button>
           {(searchParams.status || searchParams.serviceType || searchParams.paymentStatus) && (
-            <a href="/admin/bookings" className="btn-outline-gold px-2 text-[10px] sm:text-xs font-semibold rounded-xl h-[38px] flex items-center shrink-0" title="Clear Filters">
-              ✕
+            <a href="/admin/bookings" className="btn-outline-gold px-2.5 text-[10px] sm:text-xs font-semibold rounded-xl h-[38px] flex items-center shrink-0" title="Clear Filters">
+              ✕ Clear
             </a>
           )}
         </div>
