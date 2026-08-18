@@ -38,6 +38,19 @@ import { PujaCountdownTimer } from "./PujaCountdownTimer";
 import * as fpixel from "@/lib/fpixel";
 import { getAttributionData } from "@/lib/attribution";
 import { Input, Textarea, Select } from "@/components/ui/Input";
+
+function getEmbedVideoUrl(url?: string): string {
+  if (!url) return "https://www.youtube.com/embed/HfHkBEjofqk?autoplay=1";
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+  }
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+  }
+  return url.includes("autoplay=1") ? url : `${url}${url.includes("?") ? "&" : "?"}autoplay=1`;
+}
 import { Button } from "@/components/ui/Button";
 import { devToast } from "@/lib/toast";
 import { formatCurrency } from "@/lib/utils";
@@ -1054,7 +1067,7 @@ export function PujaDetailClient({
                   {playVideo ? (
                     <div className="relative w-full aspect-video rounded-lg sm:rounded-2xl overflow-hidden shadow-lg bg-black">
                       <iframe 
-                        src="https://www.youtube.com/embed/HfHkBEjofqk?autoplay=1" 
+                        src={getEmbedVideoUrl(puja.videoUrl)} 
                         title="Puja Video" 
                         className="absolute inset-0 w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

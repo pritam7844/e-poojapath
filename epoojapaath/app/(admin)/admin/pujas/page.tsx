@@ -28,6 +28,7 @@ type Puja = {
   subscriptionType?: "weekly" | "monthly";
   discount3Months?: number;
   discount6Months?: number;
+  videoUrl?: string;
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -40,7 +41,7 @@ const DEFAULT_PACKAGES: PujaPackage[] = [
 
 const EMPTY_FORM = {
   name: "", nameHi: "", description: "", descriptionHi: "",
-  price: "", duration: "", image: "", benefits: "", includes: "", scheduledAt: "", templeId: "",
+  price: "", duration: "", image: "", videoUrl: "", benefits: "", includes: "", scheduledAt: "", templeId: "",
   availableDates: [] as string[],
   slotsText: "",
   isSubscription: false,
@@ -160,7 +161,7 @@ export default function AdminPujasPage() {
   function openEdit(p: Puja) {
     setForm({
       name: p.name, nameHi: p.nameHi, description: p.description, descriptionHi: p.descriptionHi,
-      price: String(p.price), duration: p.duration, image: p.image,
+      price: String(p.price), duration: p.duration, image: p.image, videoUrl: p.videoUrl || "",
       benefits: p.benefits?.join(", ") || "",
       includes: p.includes?.join(", ") || "",
       scheduledAt: formatDateForInput(p.scheduledAt), templeId: p.temple?._id || "",
@@ -285,6 +286,7 @@ export default function AdminPujasPage() {
                   <ImageUpload label="Puja Image" required value={form.image} onChange={url => setForm(f => ({ ...f, image: url }))} folder="pujas" previewHeight="h-36" />
                 </div>
                 <Input label="Schedule Date & Time (optional)" type="datetime-local" value={form.scheduledAt} onChange={e => setForm(f => ({ ...f, scheduledAt: e.target.value }))} />
+                <Input label="Puja Video URL (YouTube / Vimeo Link)" value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))} placeholder="https://www.youtube.com/watch?v=..." />
                 
                 {/* Booking Dates Selection */}
                 <div className="md:col-span-2 border-t border-border pt-4 mt-2">

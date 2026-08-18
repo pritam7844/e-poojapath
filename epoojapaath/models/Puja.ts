@@ -38,6 +38,7 @@ export interface IPujaDoc extends Document {
   subscriptionType?: "weekly" | "monthly";
   discount3Months?: number;
   discount6Months?: number;
+  videoUrl?: string;
   chadawas?: mongoose.Types.ObjectId[];
   createdAt: Date;
 }
@@ -82,6 +83,7 @@ const PujaSchema = new Schema<IPujaDoc>(
     subscriptionType: { type: String, enum: ["weekly", "monthly"], default: "monthly" },
     discount3Months: { type: Number, default: 0 },
     discount6Months: { type: Number, default: 0 },
+    videoUrl:      { type: String },
     chadawas:      [{ type: Schema.Types.ObjectId, ref: "Chadawa" }],
   },
   { timestamps: true }

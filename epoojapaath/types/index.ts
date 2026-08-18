@@ -85,6 +85,7 @@ export interface IPuja {
   subscriptionType?: "weekly" | "monthly";
   discount3Months?: number;
   discount6Months?: number;
+  videoUrl?: string;
   chadawas?: string[];
   createdAt: string;
 }

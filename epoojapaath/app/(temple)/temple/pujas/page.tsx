@@ -23,7 +23,7 @@ const DEFAULT_PACKAGES: IPujaPackage[] = [
 
 const EMPTY_FORM = {
   name: "", nameHi: "", description: "", descriptionHi: "",
-  price: "", duration: "", image: "", benefits: "", includes: "",
+  price: "", duration: "", image: "", videoUrl: "", benefits: "", includes: "",
   templeId: "", scheduledAt: "",
 };
 
@@ -194,6 +194,7 @@ export default function TemplePujasPage() {
                   onChange={set("scheduledAt")}
                   min={new Date().toISOString().slice(0, 16)}
                 />
+                <Input label="Puja Video URL (YouTube / Vimeo Link)" value={form.videoUrl} onChange={set("videoUrl")} placeholder="https://www.youtube.com/watch?v=..." />
                 <Input label="Benefits (comma separated)" value={form.benefits} onChange={set("benefits")} placeholder="Health, Prosperity, Protection" />
                 <Input label="Includes (comma separated)" value={form.includes} onChange={set("includes")} placeholder="Abhishek, Aarti, Prasad" className="" />
                 <Textarea label="Description (English)" required value={form.description} onChange={set("description")} rows={3} className="md:col-span-2" />

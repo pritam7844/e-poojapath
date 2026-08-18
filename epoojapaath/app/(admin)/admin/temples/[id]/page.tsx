@@ -65,7 +65,7 @@ const DEFAULT_PACKAGES: IPujaPackage[] = [
 ];
 const EMPTY_PUJA = {
   name: "", nameHi: "", description: "", descriptionHi: "",
-  price: "", duration: "", image: "", benefits: "", includes: "", scheduledAt: "",
+  price: "", duration: "", image: "", videoUrl: "", benefits: "", includes: "", scheduledAt: "",
   availableDates: [] as string[],
   isActive: true,
   chadawas: [] as string[],
@@ -287,7 +287,7 @@ export default function AdminTempleDetailPage() {
     setPujaForm({
       name: p.name, nameHi: p.nameHi, description: p.description,
       descriptionHi: p.descriptionHi, price: String(p.price),
-      duration: p.duration, image: p.image,
+      duration: p.duration, image: p.image, videoUrl: (p as any).videoUrl || "",
       benefits: p.benefits?.join(", ") || "",
       includes: p.includes?.join(", ") || "",
       scheduledAt: "",
@@ -623,6 +623,7 @@ export default function AdminTempleDetailPage() {
                   />
                 </div>
                 <Input label="Schedule Date & Time (optional)" type="datetime-local" value={pujaForm.scheduledAt} onChange={setPujaField("scheduledAt")} min={new Date().toISOString().slice(0, 16)} />
+                <Input label="Puja Video URL (YouTube / Vimeo Link)" value={pujaForm.videoUrl} onChange={setPujaField("videoUrl")} placeholder="https://www.youtube.com/watch?v=..." />
                 
                 {/* Booking Dates Selection */}
                 <div className="md:col-span-2 border-t border-border pt-4 mt-2">
