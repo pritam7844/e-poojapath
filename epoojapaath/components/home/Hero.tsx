@@ -663,8 +663,8 @@ const slides = [
     ring: "#EC9DD4", glow: "rgba(236,157,212,0.18)", Illustration: ChadawaIllustration,
   },
   {
-    en: { title: "Discover Temples", description: "Explore 500+ verified temples with timings, history, pujas and devotee reviews." },
-    hi: { title: "मंदिर खोजें", description: "समय, इतिहास, पूजा और भक्त समीक्षाओं के साथ 500+ प्रमाणित मंदिर देखें।" },
+    en: { title: "Discover Temples", description: "Explore verified temples with timings, history, pujas and devotee reviews." },
+    hi: { title: "मंदिर खोजें", description: "समय, इतिहास, पूजा और भक्त समीक्षाओं के साथ प्रमाणित मंदिर देखें।" },
     gradient: "from-[#EFF2FF] to-[#F5F0FF]", darkGradient: "dark:from-[#0E1430] dark:to-[#1A1230]",
     ring: "#94AAEE", glow: "rgba(148,170,238,0.18)", Illustration: TempleIllustration,
   },

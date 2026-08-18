@@ -34,7 +34,7 @@ export default async function TemplesPage({ searchParams }: PageProps) {
       <PageHero
         sanskrit="तीर्थस्थल खोजें"
         title="Explore Temples"
-        subtitle="Discover 500+ verified temples across India. Book pujas, offer chadawa, seek divine blessings."
+        subtitle={`Discover ${temples.length > 0 ? `${temples.length}+ ` : ""}verified temples across India. Book pujas, offer chadawa, seek divine blessings.`}
       />
       <TempleFilters city={searchParams?.city} deity={searchParams?.deity} />
       <MandalaDivider />

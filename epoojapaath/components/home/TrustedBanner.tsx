@@ -87,8 +87,8 @@ export function TrustedBanner() {
             </div>
             <h4 className="text-sm font-bold text-gray-800">
               {t(
-                `${totalReviews >= 500 ? totalReviews : 500 + totalReviews}+ Devotees Trusted`,
-                `${totalReviews >= 500 ? totalReviews : 500 + totalReviews}+ श्रद्धालुओं द्वारा विश्वसनीय`
+                `${500 + totalReviews}+ Devotees Trusted`,
+                `${500 + totalReviews}+ श्रद्धालुओं द्वारा विश्वसनीय`
               )}
             </h4>
             <p className="text-xs text-gray-500 font-medium">

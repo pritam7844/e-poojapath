@@ -221,6 +221,17 @@ export function PujaDetailClient({
   const [stats, setStats] = useState({ temples: 0, bookings: 0, devotees: 0 });
 
   useEffect(() => {
+    fetch("/api/public/stats")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          setStats(resData.data);
+        }
+      })
+      .catch((err) => console.error("Error loading stats in PujaDetailClient:", err));
+  }, []);
+
+  useEffect(() => {
     if (puja) {
       fpixel.viewContent({
         content_name: puja.name,
@@ -1175,13 +1186,13 @@ export function PujaDetailClient({
               <div className="flex items-center justify-center gap-8 mt-6">
                 <div className="text-center">
                   <p className="font-heading text-2xl text-saffron">
-                    {stats.devotees > 0 ? `${stats.devotees.toLocaleString("en-IN")}+` : "500+"}
+                    {stats.devotees > 0 ? `${stats.devotees.toLocaleString("en-IN")}+` : `${stats.devotees}+`}
                   </p>
                   <p className="text-xs text-muted-foreground">Trusted Bhakts</p>
                 </div>
                 <div className="text-center">
                   <p className="font-heading text-2xl text-saffron">
-                    {stats.temples > 0 ? `${stats.temples.toLocaleString("en-IN")}+` : "500+"}
+                    {stats.temples > 0 ? `${stats.temples.toLocaleString("en-IN")}+` : `${stats.temples}+`}
                   </p>
                   <p className="text-xs text-muted-foreground">Verified Temples</p>
                 </div>

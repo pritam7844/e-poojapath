@@ -1,15 +1,34 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ShieldCheck, Video, Gift, Lock, Headphones } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
 
 export function WhyChoose() {
   const { t } = useLang();
+  const [stats, setStats] = useState<{ priests: number }>({ priests: 0 });
+
+  useEffect(() => {
+    fetch("/api/public/stats")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          setStats({
+            priests: resData.data.priests ?? resData.data.temples ?? 0,
+          });
+        }
+      })
+      .catch((err) => console.error("Error fetching stats in WhyChoose:", err));
+  }, []);
+
+  const priestTitle = stats.priests > 0 
+    ? `${stats.priests.toLocaleString("en-IN")}+ ${t("Verified", "सत्यापित")}`
+    : t("Verified", "सत्यापित");
 
   const reasons = [
     {
       icon: ShieldCheck,
-      title: t("500+ Verified", "500+ सत्यापित"),
+      title: priestTitle,
       desc: t("Temple Priests", "मंदिर के पुजारी"),
     },
     {

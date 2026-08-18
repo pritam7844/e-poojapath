@@ -1,18 +1,33 @@
 "use client";
  
+import { useEffect, useState } from "react";
 import { useLang } from "@/contexts/LanguageContext";
  
 export function HowItWorks() {
   const { t } = useLang();
- 
+  const [templeCount, setTempleCount] = useState<number>(0);
+
+  useEffect(() => {
+    fetch("/api/public/stats")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          setTempleCount(resData.data.temples || 0);
+        }
+      })
+      .catch((err) => console.error("Error loading stats in HowItWorks:", err));
+  }, []);
+
+  const countStr = templeCount > 0 ? `${templeCount}+ ` : "";
+
   const steps = [
     {
       number: "01",
       emoji: "🛕",
       title: t("Choose Your Temple", "मंदिर चुनें"),
       desc: t(
-        "Browse 500+ verified temples across India. Filter by deity, city, or puja type.",
-        "भारत भर में 500+ सत्यापित मंदिरों को खोजें। देवता, शहर या पूजा प्रकार से फ़िल्टर करें।"
+        `Browse ${countStr}verified temples across India. Filter by deity, city, or puja type.`,
+        `भारत भर में ${countStr}सत्यापित मंदिरों को खोजें। देवता, शहर या पूजा प्रकार से फ़िल्टर करें।`
       ),
     },
     {
