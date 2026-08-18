@@ -11,8 +11,8 @@ export function MobileBookNow() {
   const pathname = usePathname();
   const [showSticky, setShowSticky] = useState(false);
  
-  // Hide the generic button on puja detail page
-  const isDetailPage = pathname.startsWith("/puja/") && pathname.split("/").length === 3;
+  // Hide the generic button on puja & chadawa detail pages
+  const isDetailPage = (pathname.startsWith("/puja/") || pathname.startsWith("/chadawa/")) && pathname.split("/").length === 3;
  
   useEffect(() => {
     if (isDetailPage) {

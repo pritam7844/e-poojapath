@@ -112,6 +112,7 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
   // States to hold other special offerings from the same temple
   const [templeSpecialChadawas, setTempleSpecialChadawas] = useState<ChadawaData[]>([]);
   const [selectedOthers, setSelectedOthers] = useState<Record<string, boolean>>({});
+  const [showAllSpecialChadawas, setShowAllSpecialChadawas] = useState(false);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
 
   const reviewsList = [
@@ -543,67 +544,95 @@ export default function ChadawaDetailPage({ params }: { params: { id: string } }
             )}
 
             {/* ── Add More Special Offerings ── */}
-            {templeSpecialChadawas.length > 0 && (
-              <section className="mt-8 border-t border-border/80 pt-6 animate-fade-in">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="font-heading text-xl text-foreground flex items-center gap-2">
-                      <Sparkles size={18} className="text-saffron animate-pulse" /> Add More Special Offerings
-                    </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">Select other special offerings to combine with this booking</p>
+            {templeSpecialChadawas.length > 0 && (() => {
+              const displayedSpecialChadawas = showAllSpecialChadawas ? templeSpecialChadawas : templeSpecialChadawas.slice(0, 3);
+              const hasMoreSpecialChadawas = templeSpecialChadawas.length > 3;
+
+              return (
+                <section className="mt-8 border-t border-border/80 pt-6 animate-fade-in">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 className="font-heading text-base sm:text-xl text-foreground flex items-center gap-2 font-bold">
+                        <Sparkles size={18} className="text-saffron animate-pulse" /> Add More Special Offerings
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Select other special offerings to combine with this booking</p>
+                    </div>
+                    {selectedOthersList.length > 0 && (
+                      <span className="text-xs bg-saffron/10 text-saffron font-semibold px-2.5 py-1 rounded-full border border-saffron/20">
+                        {selectedOthersList.length} selected
+                      </span>
+                    )}
                   </div>
-                  {selectedOthersList.length > 0 && (
-                    <span className="text-xs bg-saffron/10 text-saffron font-semibold px-3 py-1 rounded-full border border-saffron/20">
-                      {selectedOthersList.length} extra offering{selectedOthersList.length > 1 ? "s" : ""} selected
-                    </span>
-                  )}
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {templeSpecialChadawas.map((item) => {
-                    const isChecked = !!selectedOthers[item._id];
-                    return (
-                      <div
-                        key={item._id}
-                        onClick={() => setSelectedOthers((prev) => ({ ...prev, [item._id]: !isChecked }))}
-                        className={`flex items-start gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer select-none ${
-                          isChecked
-                            ? "border-saffron bg-saffron/[0.03] shadow-sm"
-                            : "border-border bg-card/40 hover:border-saffron/40"
-                        }`}
+                  {/* 3-Column Compact Grid for Special Offerings */}
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    {displayedSpecialChadawas.map((item) => {
+                      const isChecked = !!selectedOthers[item._id];
+                      return (
+                        <div
+                          key={item._id}
+                          onClick={() => setSelectedOthers((prev) => ({ ...prev, [item._id]: !isChecked }))}
+                          className={`card-devotional cursor-pointer overflow-hidden p-1.5 sm:p-2.5 group transition-all duration-200 w-full flex flex-col justify-between rounded-xl border-2 select-none ${
+                            isChecked
+                              ? "border-saffron bg-saffron/10 shadow-md shadow-saffron/10"
+                              : "border-border bg-card hover:border-saffron/40"
+                          }`}
+                        >
+                          <div>
+                            <div className="relative h-12 sm:h-16 w-full rounded-lg overflow-hidden mb-1">
+                              <Image
+                                src={item.image || "/kasbeswari.jpg"}
+                                alt={item.name}
+                                fill
+                                className="object-cover"
+                              />
+                              <div className="absolute top-1 right-1">
+                                <div
+                                  className={`w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center border transition-all ${
+                                    isChecked
+                                      ? "bg-saffron border-saffron text-white shadow"
+                                      : "border-white/80 bg-black/30 backdrop-blur-xs"
+                                  }`}
+                                >
+                                  {isChecked && <Check size={11} className="stroke-[3]" />}
+                                </div>
+                              </div>
+                            </div>
+                            <p className="font-heading text-[9.5px] sm:text-xs font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
+                            {item.nameHi && <p className="text-[8.5px] sm:text-[10px] text-saffron font-sanskrit line-clamp-1">{item.nameHi}</p>}
+                          </div>
+
+                          <div className="mt-1 flex items-center justify-between pt-1 border-t border-border/40">
+                            <p className="font-heading text-xs sm:text-sm font-bold text-saffron">{formatCurrency(item.price)}</p>
+                            <div
+                              className={`text-[8.5px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded transition-colors ${
+                                isChecked ? "bg-saffron text-white" : "bg-saffron/10 text-saffron border border-saffron/20"
+                              }`}
+                            >
+                              {isChecked ? "Added" : "+ Add"}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* See More / Show Less Button */}
+                  {hasMoreSpecialChadawas && (
+                    <div className="mt-3 text-center">
+                      <button
+                        onClick={() => setShowAllSpecialChadawas(!showAllSpecialChadawas)}
+                        type="button"
+                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-saffron/30 bg-saffron/5 text-saffron text-xs font-bold hover:bg-saffron/10 active:scale-95 transition-all shadow-sm"
                       >
-                        {/* Selector checkmark */}
-                        <div className="mt-1">
-                          <div
-                            className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${
-                              isChecked
-                                ? "bg-saffron border-saffron text-white"
-                                : "border-muted-foreground/30 hover:border-saffron"
-                            }`}
-                          >
-                            {isChecked && <Check size={14} className="stroke-[3]" />}
-                          </div>
-                        </div>
-
-                        {/* Thumbnail image */}
-                        {item.image && (
-                          <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-border">
-                            <Image src={item.image} alt={item.name} fill className="object-cover" />
-                          </div>
-                        )}
-
-                        {/* Text details */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-foreground text-sm leading-snug line-clamp-1">{item.name}</p>
-                          {item.nameHi && <p className="text-xs text-saffron font-sanskrit truncate">{item.nameHi}</p>}
-                          <p className="text-saffron font-bold text-sm mt-1">{formatCurrency(item.price)}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
+                        <span>{showAllSpecialChadawas ? "Show Less" : `See More (${templeSpecialChadawas.length - 3} More Offerings)`}</span>
+                        {showAllSpecialChadawas ? <ChevronDown size={14} className="rotate-180 transition-transform" /> : <ChevronDown size={14} />}
+                      </button>
+                    </div>
+                  )}
+                </section>
+              );
+            })()}
 
             {/* ── Included Items ── */}
             {chadawa.items.length > 0 && (

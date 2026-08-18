@@ -267,17 +267,17 @@ export function PujaDetailClient({
 
   // ── Chadawa section renderer ────────────────────────────────────────────────
   const renderChadawaSection = (isMobileLayout: boolean = false) => {
-    const displayedMobileChadawa = showAllMobileChadawa ? chadawaItems : chadawaItems.slice(0, 3);
+    const displayedChadawa = showAllMobileChadawa ? chadawaItems : chadawaItems.slice(0, 3);
     const hasMoreChadawa = chadawaItems.length > 3;
 
     return (
       <section className="relative">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="font-heading text-base md:text-2xl text-foreground font-bold">
+            <h2 className="font-heading text-base md:text-xl text-foreground font-bold">
               Add Sacred Chadawa <span className="text-xs font-semibold text-muted-foreground ml-1">(Optional)</span>
             </h2>
-            <p className="text-[11px] md:text-sm text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
+            <p className="text-[11px] md:text-xs text-muted-foreground mt-0.5">Select sacred offerings to add to your booking</p>
           </div>
           {selectedChadawa.length > 0 && (
             <div className="bg-saffron/10 border border-saffron/30 rounded-full px-2.5 py-0.5 md:px-3 md:py-1 flex items-center gap-1">
@@ -286,21 +286,22 @@ export function PujaDetailClient({
           )}
         </div>
 
-        {/* Mobile 3-Column Grid View */}
+        {/* Mobile 3-Column Compact Grid View */}
         <div className="block md:hidden">
-          <div className="grid grid-cols-3 gap-2 px-0.5">
-            {displayedMobileChadawa.map((item) => {
+          <div className="grid grid-cols-3 gap-1.5 px-0.5">
+            {displayedChadawa.map((item) => {
               const selected = isSelected(item._id);
+              const sc = selectedChadawa.find((s) => s.item._id === item._id);
               return (
                 <div
                   key={item._id}
                   onClick={() => toggleChadawa(item)}
-                  className={`card-devotional cursor-pointer overflow-hidden p-1.5 group transition-all duration-200 w-full flex flex-col justify-between ${
+                  className={`card-devotional cursor-pointer overflow-hidden p-1.5 group transition-all duration-200 w-full flex flex-col justify-between rounded-xl ${
                     selected ? "ring-2 ring-saffron shadow-md shadow-saffron/20 border-saffron bg-saffron/10" : "border-border bg-card"
                   }`}
                 >
                   <div>
-                    <div className="relative h-16 w-full rounded-lg overflow-hidden mb-1">
+                    <div className="relative h-12 w-full rounded-lg overflow-hidden mb-1">
                       <Image
                         src={item.image || "/kasbeswari.jpg"}
                         alt={item.name}
@@ -313,100 +314,109 @@ export function PujaDetailClient({
                         </div>
                       )}
                     </div>
-                    <p className="font-heading text-[10px] font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
+                    <p className="font-heading text-[9.5px] font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
                   </div>
 
                   <div className="mt-1 flex items-center justify-between pt-1 border-t border-border/40">
                     <p className="font-heading text-xs font-bold text-saffron">₹{item.price}</p>
-                    <div
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-colors ${
-                        selected ? "bg-saffron text-white" : "bg-saffron/10 text-saffron border border-saffron/20"
-                      }`}
-                    >
-                      {selected ? "Added" : "+ Add"}
+                    {selected && sc ? (
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => updateQty(item._id, -1)} className="w-4 h-4 rounded-full bg-border flex items-center justify-center text-foreground hover:bg-saffron/20"><Minus size={8} /></button>
+                        <span className="text-[10px] font-bold text-saffron">{sc.qty}</span>
+                        <button onClick={() => updateQty(item._id, 1)} className="w-4 h-4 rounded-full bg-border flex items-center justify-center text-foreground hover:bg-saffron/20"><Plus size={8} /></button>
+                      </div>
+                    ) : (
+                      <div
+                        className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded transition-colors ${
+                          selected ? "bg-saffron text-white" : "bg-saffron/10 text-saffron border border-saffron/20"
+                        }`}
+                      >
+                        {selected ? "Added" : "+ Add"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Desktop Compact 3-Column Grid View */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-3 gap-3">
+            {displayedChadawa.map((item) => {
+              const selected = isSelected(item._id);
+              const sc = selectedChadawa.find((s) => s.item._id === item._id);
+              return (
+                <div
+                  key={item._id}
+                  className={`card-devotional overflow-hidden p-0 group transition-all duration-200 rounded-2xl border ${
+                    selected ? "ring-2 ring-saffron shadow-md shadow-saffron/10 border-saffron bg-saffron/5" : "border-border bg-card"
+                  }`}
+                >
+                  <div className="relative h-20 overflow-hidden">
+                    <Image
+                      src={item.image || "/kasbeswari.jpg"}
+                      alt={item.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    {selected && (
+                      <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-saffron rounded-full flex items-center justify-center shadow">
+                        <Check size={11} className="text-white" strokeWidth={3} />
+                      </div>
+                    )}
+                    <div className="absolute bottom-1.5 left-2.5 right-2.5">
+                      <p className="text-white font-heading text-xs font-bold leading-tight line-clamp-1">{item.name}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5">
+                    <p className="text-muted-foreground text-[11px] line-clamp-1 mb-2">{item.description}</p>
+
+                    <div className="flex items-center justify-between">
+                      <p className="font-heading text-saffron text-sm font-bold">₹{item.price}</p>
+                      {selected && sc ? (
+                        <div className="flex items-center gap-1">
+                          <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, -1); }} className="w-5 h-5 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Minus size={9} /></button>
+                          <span className="font-heading text-xs text-foreground w-4 text-center font-bold">{sc.qty}</span>
+                          <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, 1); }} className="w-5 h-5 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Plus size={9} /></button>
+                          <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="ml-0.5 w-5 h-5 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition"><X size={10} /></button>
+                        </div>
+                      ) : (
+                        <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-semibold px-2.5 py-1 rounded-full hover:opacity-90 transition shadow-sm flex items-center gap-0.5"><Plus size={10} /> Add</button>
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-
-          {/* See More / Show Less Button for Mobile */}
-          {hasMoreChadawa && (
-            <div className="mt-3 text-center">
-              <button
-                onClick={() => setShowAllMobileChadawa(!showAllMobileChadawa)}
-                type="button"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-saffron/30 bg-saffron/5 text-saffron text-xs font-bold hover:bg-saffron/10 active:scale-95 transition-all shadow-sm"
-              >
-                <span>{showAllMobileChadawa ? "Show Less" : `See More (${chadawaItems.length - 3} More)`}</span>
-                {showAllMobileChadawa ? <ChevronDown size={14} className="rotate-180 transition-transform" /> : <ChevronDown size={14} />}
-              </button>
-            </div>
-          )}
         </div>
 
-
-        {/* Desktop Grid View */}
-        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {chadawaItems.map((item) => {
-            const selected = isSelected(item._id);
-            const sc = selectedChadawa.find((s) => s.item._id === item._id);
-            return (
-              <div
-                key={item._id}
-                className={`card-devotional overflow-hidden p-0 group transition-all duration-200 ${selected ? "ring-2 ring-saffron shadow-lg shadow-saffron/10" : ""}`}
-              >
-                <div className="relative h-36 overflow-hidden">
-                  <Image
-                    src={item.image || "/kasbeswari.jpg"}
-                    alt={item.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
-                  {selected && (
-                    <div className="absolute top-2 right-2 w-6 h-6 bg-saffron rounded-full flex items-center justify-center shadow">
-                      <Check size={13} className="text-white" strokeWidth={3} />
-                    </div>
-                  )}
-                  <div className="absolute bottom-2 left-3 right-3">
-                    <p className="text-white font-heading text-sm leading-tight line-clamp-2">{item.name}</p>
-                  </div>
-                </div>
-
-                <div className="p-3">
-                  <p className="font-sanskrit text-saffron/80 text-xs mb-0.5">{item.nameHi}</p>
-                  <p className="text-muted-foreground text-xs line-clamp-1 mb-3">{item.description}</p>
-
-                  <div className="flex items-center justify-between">
-                    <p className="font-heading text-foreground text-base">₹{item.price}</p>
-                    {selected && sc ? (
-                      <div className="flex items-center gap-1.5">
-                        <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, -1); }} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Minus size={10} /></button>
-                        <span className="font-heading text-sm text-foreground w-5 text-center">{sc.qty}</span>
-                        <button onClick={(e) => { e.stopPropagation(); updateQty(item._id, 1); }} className="w-6 h-6 rounded-full bg-border flex items-center justify-center hover:bg-saffron/20 transition"><Plus size={10} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="ml-1 w-6 h-6 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition"><X size={11} /></button>
-                      </div>
-                    ) : (
-                      <button onClick={(e) => { e.stopPropagation(); toggleChadawa(item); }} className="bg-gradient-to-r from-saffron to-deep-gold text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition shadow-sm flex items-center gap-1"><Plus size={11} /> Add</button>
-                    )}
-                  </div>
-                  {selected && sc && sc.qty > 1 && <p className="text-xs text-saffron font-medium mt-2 text-right">Subtotal: ₹{item.price * sc.qty}</p>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {/* See More / Show Less Button */}
+        {hasMoreChadawa && (
+          <div className="mt-3 text-center">
+            <button
+              onClick={() => setShowAllMobileChadawa(!showAllMobileChadawa)}
+              type="button"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-saffron/30 bg-saffron/5 text-saffron text-xs font-bold hover:bg-saffron/10 active:scale-95 transition-all shadow-sm"
+            >
+              <span>{showAllMobileChadawa ? "Show Less" : `See More (${chadawaItems.length - 3} More Offerings)`}</span>
+              {showAllMobileChadawa ? <ChevronDown size={14} className="rotate-180 transition-transform" /> : <ChevronDown size={14} />}
+            </button>
+          </div>
+        )}
 
         {selectedChadawa.length > 0 && (
-          <div className="mt-4 bg-gradient-to-r from-saffron/5 to-deep-gold/5 border border-saffron/20 rounded-xl p-4">
+          <div className="mt-3 bg-gradient-to-r from-saffron/5 to-deep-gold/5 border border-saffron/20 rounded-xl p-3">
             <p className="text-xs font-semibold text-saffron mb-2 flex items-center gap-1.5">
               <Gift size={13} /> Selected Chadawa — {formatCurrency(chadawaTotal)} added to your booking
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {selectedChadawa.map((sc) => (
-                <div key={sc.item._id} className="flex items-center gap-1.5 bg-background border border-saffron/30 rounded-full px-2.5 py-1 text-xs">
+                <div key={sc.item._id} className="flex items-center gap-1.5 bg-background border border-saffron/30 rounded-full px-2.5 py-0.5 text-xs">
                   <span className="text-foreground">{sc.item.name}</span>
                   {sc.qty > 1 && <span className="text-muted-foreground">×{sc.qty}</span>}
                   <span className="text-saffron font-medium">₹{sc.item.price * sc.qty}</span>
