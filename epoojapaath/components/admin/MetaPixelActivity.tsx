@@ -56,10 +56,10 @@ export function MetaPixelActivity() {
   return (
     <div className="space-y-6">
       {/* ── Meta Pixel & Campaign Status Banner ── */}
-      <div className="bg-gradient-to-r from-[#1877F2]/10 via-purple-500/10 to-saffron/10 border border-[#1877F2]/30 rounded-2xl p-5 shadow-sm">
+      <div className="bg-gradient-to-r from-[#1877F2]/10 via-purple-500/10 to-saffron/10 border border-[#1877F2]/30 rounded-2xl p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#1877F2] text-white flex items-center justify-center shadow-md">
+            <div className="w-12 h-12 rounded-2xl bg-[#1877F2] text-white flex items-center justify-center">
               <Activity size={24} className="animate-pulse" />
             </div>
             <div>

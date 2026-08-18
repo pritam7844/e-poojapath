@@ -128,7 +128,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-200 ${
                   isActive
-                    ? "bg-saffron text-white font-bold shadow-md shadow-saffron/20"
+                    ? "bg-saffron text-white font-bold"
                     : "text-muted-foreground hover:bg-saffron/10 hover:text-saffron"
                 }`}
               >
@@ -164,7 +164,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
                 href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
                   isActive
-                    ? "bg-saffron text-white font-bold shadow-md shadow-saffron/20"
+                    ? "bg-saffron text-white font-bold"
                     : "text-muted-foreground hover:bg-saffron/10 hover:text-saffron font-medium"
                 }`}
               >

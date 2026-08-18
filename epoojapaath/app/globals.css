@@ -130,8 +130,8 @@
   /* ── Cards ── */
   .card-devotional {
     @apply rounded-2xl p-6 transition-all duration-300
-           bg-card border border-deep-gold/20 shadow-sm
-           hover:border-deep-gold/50 hover:shadow-md;
+           bg-card border border-deep-gold/20
+           hover:border-deep-gold/50;
   }
   .card-devotional:hover {
     @apply scale-[1.02];
