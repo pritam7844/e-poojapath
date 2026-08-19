@@ -401,68 +401,70 @@ export default function AdminChadawaPage() {
       ) : (
         <div className="space-y-3">
           {filtered.map(c => (
-            <div key={c._id} className={`bg-card border rounded-2xl p-4 flex items-center gap-4 transition-all hover:shadow-md ${c.isSpecial ? "border-purple-500/30 hover:border-purple-500/50" : "border-border hover:border-saffron/30"}`}>
-              {/* Image */}
-              <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
-                <Image src={c.image || c.temple?.coverImage || "/placeholder.jpg"} alt={c.name} fill className="object-cover" />
-                {c.isSpecial && (
-                  <div className="absolute top-1 left-1 bg-purple-600 text-white text-[9px] px-1 py-0.5 rounded font-bold flex items-center gap-0.5">
-                    <Sparkles size={8} /> Special
-                  </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-heading text-foreground text-sm">{c.name}</h3>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.isActive !== false ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-400"}`}>
-                    {c.isActive !== false ? "Active" : "Inactive"}
-                  </span>
-                </div>
-                <p className="text-xs text-saffron/80 font-sanskrit mt-0.5">{c.nameHi}</p>
-                <div className="flex items-center gap-3 mt-1 flex-wrap">
-                  {c.temple && (
-                    <span className="text-xs text-muted-foreground">🛕 {c.temple.name}</span>
+            <div key={c._id} className={`bg-card border rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-all hover:border-saffron/30 ${c.isSpecial ? "border-purple-500/30" : "border-border"}`}>
+              <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                {/* Image */}
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 border border-border/60">
+                  <Image src={c.image || c.temple?.coverImage || "/placeholder.jpg"} alt={c.name} fill className="object-cover" />
+                  {c.isSpecial && (
+                    <div className="absolute top-1 left-1 bg-purple-600 text-white text-[8px] sm:text-[9px] px-1 py-0.5 rounded font-bold flex items-center gap-0.5 shadow">
+                      <Sparkles size={8} /> Special
+                    </div>
                   )}
-                  <span className="text-xs text-muted-foreground">🙏 {c.deity}</span>
-                  <span className="flex items-center gap-0.5 text-xs font-semibold text-saffron">
-                    <IndianRupee size={10} />{formatCurrency(c.price)}
-                  </span>
                 </div>
-                {c.items?.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {c.items.slice(0, 4).map((item, i) => (
-                      <span key={i} className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">{item}</span>
-                    ))}
-                    {c.items.length > 4 && <span className="text-[10px] text-muted-foreground">+{c.items.length - 4} more</span>}
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-heading text-foreground text-xs sm:text-sm font-bold truncate">{c.name}</h3>
+                    <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-semibold ${c.isActive !== false ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-400"}`}>
+                      {c.isActive !== false ? "Active" : "Inactive"}
+                    </span>
                   </div>
-                )}
+                  <p className="text-[11px] sm:text-xs text-saffron/80 font-sanskrit mt-0.5 truncate">{c.nameHi}</p>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap text-[11px] sm:text-xs text-muted-foreground">
+                    {c.temple && (
+                      <span className="flex items-center gap-1 font-medium text-foreground/80">
+                        🛕 {c.temple.name}
+                        <Link href={`/admin/temples/${c.temple._id}?tab=Chadawa`} title="View in Temple"
+                          className="p-0.5 rounded text-muted-foreground hover:text-saffron transition inline-flex items-center">
+                          <ExternalLink size={12} />
+                        </Link>
+                      </span>
+                    )}
+                    <span>🙏 {c.deity}</span>
+                    <span className="flex items-center gap-0.5 font-bold text-saffron">
+                      <IndianRupee size={10} />{formatCurrency(c.price)}
+                    </span>
+                  </div>
+                  {c.items?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {c.items.slice(0, 3).map((item, i) => (
+                        <span key={i} className="text-[9.5px] sm:text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">{item}</span>
+                      ))}
+                      {c.items.length > 3 && <span className="text-[9.5px] sm:text-[10px] text-muted-foreground">+{c.items.length - 3} more</span>}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {c.temple?._id && (
-                  <Link href={`/admin/temples/${c.temple._id}?tab=Chadawa`} title="View in Temple"
-                    className="p-2 rounded-xl text-muted-foreground hover:text-saffron hover:bg-saffron/10 transition">
-                    <ExternalLink size={15} />
-                  </Link>
-                )}
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end sm:justify-start shrink-0 border-t border-border/40 pt-2.5 sm:pt-0 sm:border-t-0 w-full sm:w-auto">
                 <button onClick={() => toggleSpecial(c)} title={c.isSpecial ? "Set as Regular" : "Set as Special"}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${c.isSpecial ? "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+                  className={`px-2 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition ${c.isSpecial ? "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
                   {c.isSpecial ? "✨ Special" : "🌸 Regular"}
                 </button>
                 <button onClick={() => toggleActive(c)} title={c.isActive !== false ? "Deactivate" : "Activate"}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${c.isActive !== false ? "bg-red-500/10 text-red-400 hover:bg-red-500/20" : "bg-green-500/10 text-green-500 hover:bg-green-500/20"}`}>
+                  className={`px-2 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition ${c.isActive !== false ? "bg-red-500/10 text-red-400 hover:bg-red-500/20" : "bg-green-500/10 text-green-500 hover:bg-green-500/20"}`}>
                   {c.isActive !== false ? "Deactivate" : "Activate"}
                 </button>
                 <button onClick={() => openEdit(c)} title="Edit"
-                  className="p-2 rounded-xl text-muted-foreground hover:text-saffron hover:bg-saffron/10 transition">
-                  <Pencil size={15} />
+                  className="p-1.5 sm:p-2 rounded-xl text-muted-foreground hover:text-saffron hover:bg-saffron/10 transition border border-border/50">
+                  <Pencil size={14} />
                 </button>
                 <button onClick={() => setConfirmDelete(c)} title="Delete"
-                  className="p-2 rounded-xl text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition">
-                  <Trash2 size={15} />
+                  className="p-1.5 sm:p-2 rounded-xl text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition border border-border/50">
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>
