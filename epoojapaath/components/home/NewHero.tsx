@@ -69,7 +69,7 @@ export function NewHero() {
           <div className="flex w-full">
             <Link
               href="/puja"
-              className="relative overflow-hidden flex items-center justify-between bg-gradient-to-r from-[#E65100] to-saffron text-white text-[9px] sm:text-xs md:text-sm font-bold px-3 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full shadow-lg shadow-saffron/20 w-fit transition-transform hover:scale-[1.02] gap-1 md:gap-3"
+              className="relative overflow-hidden flex items-center justify-between bg-gradient-to-r from-[#E65100] to-saffron text-white text-[9px] sm:text-xs md:text-sm font-bold px-3 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full w-fit transition-transform hover:scale-[1.02] gap-1 md:gap-3"
             >
               <span>{t("Book a Puja Now", "Book a Puja Now")}</span>
               <span className="bg-white text-[#E65100] rounded-full p-0.5 sm:p-1 flex items-center justify-center shrink-0">

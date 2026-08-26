@@ -47,7 +47,7 @@ export function BottomCTA() {
         {/* Right - CTA Button */}
         <NextLink
           href="/puja"
-          className="inline-flex items-center justify-between bg-[#E65100] text-white font-bold px-6 py-4 rounded-full shadow-lg hover:bg-[#BF360C] transition-all duration-300 group shrink-0"
+          className="inline-flex items-center justify-between bg-[#E65100] text-white font-bold px-6 py-4 rounded-full hover:bg-[#BF360C] transition-all duration-300 group shrink-0"
         >
           <span>{t("Book a Puja Now", "पूजा बुक करें")}</span>
           <div className="ml-4 w-6 h-6 rounded-full bg-white flex items-center justify-center text-[#E65100] group-hover:translate-x-1 transition-transform">

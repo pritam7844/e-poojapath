@@ -825,7 +825,7 @@ export function Hero() {
 
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
               className="flex flex-wrap gap-4 mb-8">
-              <Link href="/puja" className="btn-saffron text-base px-8 py-3 font-semibold tracking-wide shadow-lg shadow-saffron/20">{t("BOOK PUJA 🪔", "पूजा बुक करें 🪔")}</Link>
+              <Link href="/puja" className="btn-saffron text-base px-8 py-3 font-semibold tracking-wide">{t("BOOK PUJA 🪔", "पूजा बुक करें 🪔")}</Link>
               <Link href="/chadawa" className="btn-outline-lotus text-base px-8 py-3 font-semibold tracking-wide">{t("BOOK CHADAVA 🌸", "चढ़ावा अर्पण करें 🌸")}</Link>
             </motion.div>
 

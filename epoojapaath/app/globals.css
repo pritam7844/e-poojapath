@@ -98,27 +98,27 @@
 }
 
 @layer components {
-  /* ── Buttons ── */
+  /* ── Buttons (No Shadows) ── */
   .btn-saffron {
     @apply bg-saffron text-white font-semibold px-6 py-3 rounded-full
-           hover:bg-deep-gold hover:shadow-lg transition-all duration-300
-           border border-transparent hover:border-deep-gold active:scale-95;
+           hover:bg-deep-gold transition-all duration-300
+           border border-transparent hover:border-deep-gold active:scale-95 shadow-none;
   }
 
   .btn-outline-gold {
     @apply border-2 border-deep-gold text-deep-gold font-semibold px-6 py-3 rounded-full
-           hover:bg-deep-gold hover:text-white transition-all duration-300 active:scale-95;
+           hover:bg-deep-gold hover:text-white transition-all duration-300 active:scale-95 shadow-none;
   }
 
   .btn-lotus {
     @apply text-white font-semibold px-6 py-3 rounded-full
-           hover:opacity-90 hover:shadow-lg transition-all duration-300 active:scale-95;
+           hover:opacity-90 transition-all duration-300 active:scale-95 shadow-none;
     background: linear-gradient(135deg, #EC9DD4, #C4AAEE, #94AAEE);
   }
 
   .btn-outline-lotus {
     @apply bg-transparent font-semibold px-6 py-3 rounded-full
-           hover:text-white transition-all duration-300 active:scale-95;
+           hover:text-white transition-all duration-300 active:scale-95 shadow-none;
     border: 2px solid var(--lotus-lavender);
     color: var(--lotus-blue);
   }
@@ -286,3 +286,27 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+/* ── Global Rule: Remove box-shadow and drop-shadow from ALL buttons site-wide ── */
+button,
+a.btn-saffron,
+a.btn-outline-gold,
+a.btn-lotus,
+a.btn-outline-lotus,
+a[class*="btn-"],
+button[class*="btn-"],
+[role="button"] {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+button:hover,
+a.btn-saffron:hover,
+a.btn-outline-gold:hover,
+a.btn-lotus:hover,
+a.btn-outline-lotus:hover,
+a[class*="btn-"]:hover,
+button[class*="btn-"]:hover,
+[role="button"]:hover {
+  box-shadow: none !important;
+  filter: none !important;
+}
