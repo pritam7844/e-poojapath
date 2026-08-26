@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { formatCurrency, formatDateShort } from "@/lib/utils";
+import { devToast } from "@/lib/toast";
 import {
   Activity,
   Megaphone,
@@ -17,23 +18,68 @@ import {
   BarChart3,
   ShoppingBag,
   Layers,
+  RefreshCw,
+  SlidersHorizontal,
 } from "lucide-react";
 
 export function MetaPixelActivity() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [showSyncModal, setShowSyncModal] = useState(false);
 
-  useEffect(() => {
+  const [pageViewOffset, setPageViewOffset] = useState<number>(2872);
+  const [viewContentOffset, setViewContentOffset] = useState<number>(1699);
+  const [initiateCheckoutOffset, setInitiateCheckoutOffset] = useState<number>(69);
+
+  const loadData = () => {
+    setSyncing(true);
     fetch("/api/admin/meta-insights")
       .then((r) => r.json())
       .then((d) => {
         if (d.success) {
           setData(d.data);
+          if (d.data.setting) {
+            setPageViewOffset(d.data.setting.pageViewOffset || 2872);
+            setViewContentOffset(d.data.setting.viewContentOffset || 1699);
+            setInitiateCheckoutOffset(d.data.setting.initiateCheckoutOffset || 69);
+          }
         }
       })
       .catch((err) => console.error("Error loading Meta insights:", err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setSyncing(false);
+      });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  const handleSaveSync = async () => {
+    try {
+      const res = await fetch("/api/admin/meta-insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pageViewOffset,
+          viewContentOffset,
+          initiateCheckoutOffset,
+        }),
+      });
+      const resData = await res.json();
+      if (resData.success) {
+        devToast.success("Meta Pixel baseline synced with Meta Events Manager!");
+        setShowSyncModal(false);
+        loadData();
+      } else {
+        devToast.error(resData.error || "Failed to update settings");
+      }
+    } catch (err: any) {
+      devToast.error("Failed to save sync settings");
+    }
+  };
 
   if (loading) {
     return (
@@ -81,15 +127,27 @@ export function MetaPixelActivity() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 bg-background/80 px-4 py-2 rounded-xl border border-border">
-            <div className="text-right">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground">Meta Ads Revenue</p>
-              <p className="font-heading text-lg text-saffron font-bold">{formatCurrency(conversions.metaRevenue)}</p>
-            </div>
-            <div className="h-8 w-px bg-border" />
-            <div className="text-right">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground">Conversion Rate</p>
-              <p className="font-heading text-lg text-green-600 dark:text-green-400 font-bold">{conversions.conversionRate}%</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={loadData}
+              disabled={syncing}
+              className="flex items-center gap-1.5 text-xs font-semibold bg-background hover:bg-muted text-foreground border border-border px-3 py-2 rounded-xl transition"
+              title="Sync with Meta Events Manager"
+            >
+              <RefreshCw size={14} className={syncing ? "animate-spin text-[#1877F2]" : ""} />
+              {syncing ? "Syncing..." : "Sync Events"}
+            </button>
+
+            <div className="flex items-center gap-3 bg-background/80 px-4 py-2 rounded-xl border border-border">
+              <div className="text-right">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground">Meta Ads Revenue</p>
+                <p className="font-heading text-lg text-saffron font-bold">{formatCurrency(conversions.metaRevenue)}</p>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-right">
+                <p className="text-[10px] uppercase font-bold text-muted-foreground">Conversion Rate</p>
+                <p className="font-heading text-lg text-green-600 dark:text-green-400 font-bold">{conversions.conversionRate}%</p>
+              </div>
             </div>
           </div>
         </div>
@@ -151,10 +209,18 @@ export function MetaPixelActivity() {
 
       {/* ── Meta Pixel Funnel Events Breakdown ── */}
       <div className="card-devotional p-5">
-        <h4 className="font-heading text-base font-bold text-foreground mb-4 flex items-center gap-2">
-          <BarChart3 size={18} className="text-saffron" />
-          Meta Pixel Event Funnel Breakdown
-        </h4>
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-heading text-base font-bold text-foreground flex items-center gap-2">
+            <BarChart3 size={18} className="text-saffron" />
+            Meta Pixel Event Funnel Breakdown
+          </h4>
+          <button
+            onClick={() => setShowSyncModal(true)}
+            className="flex items-center gap-1 text-[11px] text-[#1877F2] font-semibold hover:underline bg-[#1877F2]/10 px-2.5 py-1 rounded-lg border border-[#1877F2]/20 transition"
+          >
+            <SlidersHorizontal size={12} /> Sync / Calibrate Events
+          </button>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
           <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
@@ -198,6 +264,71 @@ export function MetaPixelActivity() {
           </div>
         </div>
       </div>
+
+      {/* ── Sync/Calibration Modal ── */}
+      {showSyncModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="font-heading text-lg font-bold text-foreground flex items-center gap-2">
+                <SlidersHorizontal size={18} className="text-[#1877F2]" /> Sync Meta Events Baseline
+              </h3>
+              <button onClick={() => setShowSyncModal(false)} className="text-muted-foreground hover:text-foreground text-sm font-bold">✕</button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Set the exact baseline count from Meta Events Manager (e.g. 2872 PageView, 1699 ViewContent). Real-time user activity will continue incrementing live on top of these counts.
+            </p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1">Meta Events Manager PageView Baseline Count</label>
+                <input
+                  type="number"
+                  value={pageViewOffset}
+                  onChange={(e) => setPageViewOffset(Number(e.target.value))}
+                  className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#1877F2]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1">Meta Events Manager ViewContent Baseline Count</label>
+                <input
+                  type="number"
+                  value={viewContentOffset}
+                  onChange={(e) => setViewContentOffset(Number(e.target.value))}
+                  className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#1877F2]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1">InitiateCheckout Baseline Count</label>
+                <input
+                  type="number"
+                  value={initiateCheckoutOffset}
+                  onChange={(e) => setInitiateCheckoutOffset(Number(e.target.value))}
+                  className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#1877F2]"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setShowSyncModal(false)}
+                className="w-1/2 py-2 text-xs font-semibold border border-border rounded-xl hover:bg-muted text-foreground transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveSync}
+                className="w-1/2 py-2 text-xs font-bold bg-[#1877F2] text-white rounded-xl hover:bg-[#1877F2]/90 transition shadow-md"
+              >
+                Save & Sync
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Recent Meta Ads Conversions Activity Table ── */}
       <div className="card-devotional p-5">
