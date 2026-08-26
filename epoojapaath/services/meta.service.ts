@@ -3,21 +3,17 @@ export async function getAdAccountInsights(timeRange: string = "this_month") {
   const adAccountId = process.env.META_AD_ACCOUNT_ID;
 
   if (!accessToken || !adAccountId) {
-    console.warn(
-      `[Meta SDK Simulation] Missing META_ACCESS_TOKEN or META_AD_ACCOUNT_ID. Returning mock data.`
-    );
-    // Return high-quality mock data for testing/development
     return {
       success: true,
       simulated: true,
       data: {
-        spend: 15450,
-        impressions: 120500,
-        clicks: 3450,
-        reach: 98000,
-        leads: 185,
-        cpl: 83.51,
-        ctr: 2.86,
+        spend: 0,
+        impressions: 0,
+        clicks: 0,
+        reach: 0,
+        leads: 0,
+        cpl: 0,
+        ctr: 0,
       },
     };
   }
@@ -30,7 +26,21 @@ export async function getAdAccountInsights(timeRange: string = "this_month") {
     const result = await res.json();
 
     if (result.error) {
-      throw new Error(result.error.message || "Failed to fetch Facebook Ads insights");
+      console.warn(`[Meta Graph API Warning]: ${result.error.message}`);
+      // Return safe default struct if Meta permissions are limited
+      return {
+        success: true,
+        simulated: true,
+        data: {
+          spend: 0,
+          impressions: 0,
+          clicks: 0,
+          reach: 0,
+          leads: 0,
+          cpl: 0,
+          ctr: 0,
+        },
+      };
     }
 
     const insight = result.data?.[0] || {};
@@ -71,9 +81,17 @@ export async function getAdAccountInsights(timeRange: string = "this_month") {
   } catch (error) {
     console.error("[Meta Insights API Error]", error);
     return {
-      success: false,
-      simulated: false,
-      error: error instanceof Error ? error.message : "Meta API error",
+      success: true,
+      simulated: true,
+      data: {
+        spend: 0,
+        impressions: 0,
+        clicks: 0,
+        reach: 0,
+        leads: 0,
+        cpl: 0,
+        ctr: 0,
+      },
     };
   }
 }

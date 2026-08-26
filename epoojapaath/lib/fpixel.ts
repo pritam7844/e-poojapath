@@ -1,3 +1,5 @@
+import { getAttributionData } from "@/lib/attribution";
+
 declare global {
   interface Window {
     fbq: any;
@@ -7,16 +9,43 @@ declare global {
 
 export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
 
+const sendPixelEventToDb = (eventName: string, metadata: Record<string, any> = {}) => {
+  if (typeof window === "undefined") return;
+  try {
+    const attr = getAttributionData();
+    const path = window.location.pathname;
+
+    fetch("/api/analytics/pixel-track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventName,
+        path,
+        utmSource: attr.utmSource || "",
+        utmCampaign: attr.utmCampaign || "",
+        utmMedium: attr.utmMedium || "",
+        fbclid: attr.fbclid || "",
+        metadata,
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (err) {
+    // Ignore tracking errors
+  }
+};
+
 export const pageview = () => {
   if (typeof window !== "undefined" && window.fbq) {
     window.fbq("track", "PageView");
   }
+  sendPixelEventToDb("PageView");
 };
 
 export const event = (name: string, options: Record<string, any> = {}) => {
   if (typeof window !== "undefined" && window.fbq) {
     window.fbq("track", name, options);
   }
+  sendPixelEventToDb(name, options);
 };
 
 export const viewContent = (options: { content_name?: string; content_category?: string; value?: number; currency?: string }) => {
@@ -61,4 +90,3 @@ export const purchase = (options: { content_name?: string; value?: number; curre
     order_id: options.order_id || "",
   });
 };
-
